@@ -9,7 +9,7 @@ function App() {
 
   return (
     <>
-      <div>Mini App + Vite + TS + React + Wagmi</div>
+      <div className="bg-blue-300">Mini App + Vite + TS + React + Wagmi</div>
       <ConnectMenu />
     </>
   );
