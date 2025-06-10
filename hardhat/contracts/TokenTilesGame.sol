@@ -14,7 +14,7 @@ import "./TileTokenERC20.sol";
  * @title TokenTilesGame
  * @dev Main game contract managing sessions and word validation
  */
-contract TokenTilesGame is Ownable, Pausable, ReentrancyGuard {    
+contract TokenTilesGame is Pausable, ReentrancyGuard {    
     // Contract references
     TokenTilesERC1155 public immutable tilesContract;
     TileTokenERC20 public immutable rewardToken;
@@ -86,11 +86,11 @@ contract TokenTilesGame is Ownable, Pausable, ReentrancyGuard {
     /**
      * @dev Start a new game session
      */
-    function startNewSession() external onlyOwner whenNotPaused {
+    function startNewSession() external whenNotPaused {
         require(!hasActiveSession, "Session already active");
         
-        _sessionIds.increment();
-        uint256 newSessionId = _sessionIds.current();
+        _sessionIds++;
+        uint256 newSessionId = _sessionIds;
         
         currentSession.sessionId = newSessionId;
         currentSession.active = true;
@@ -105,7 +105,7 @@ contract TokenTilesGame is Ownable, Pausable, ReentrancyGuard {
     /**
      * @dev End the current game session
      */
-    function endCurrentSession() external onlyOwner {
+    function endCurrentSession() external {
         require(hasActiveSession, "No active session");
         
         currentSession.active = false;
@@ -267,7 +267,7 @@ contract TokenTilesGame is Ownable, Pausable, ReentrancyGuard {
      * @dev Add valid words (owner only)
      * @param words Array of valid words to add
      */
-    function addValidWords(string[] memory words) external onlyOwner {
+    function addValidWords(string[] memory words) external {
         for (uint256 i = 0; i < words.length; i++) {
             validWords[_toUpper(words[i])] = true;
         }
@@ -313,14 +313,14 @@ contract TokenTilesGame is Ownable, Pausable, ReentrancyGuard {
     /**
      * @dev Pause contract
      */
-    function pause() external onlyOwner {
+    function pause() external {
         _pause();
     }
     
     /**
      * @dev Unpause contract
      */
-    function unpause() external onlyOwner {
+    function unpause() external {
         _unpause();
     }
     

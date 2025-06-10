@@ -2,14 +2,13 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title TokenTilesERC1155
  * @dev ERC1155 contract for letter tiles (A-Z)
  */
-contract TokenTilesERC1155 is ERC1155, Ownable, Pausable {    
+contract TokenTilesERC1155 is ERC1155, Pausable {    
     // Tile IDs: A=0, B=1, ..., Z=25
     uint256 public constant TOTAL_LETTERS = 26;
     
@@ -44,7 +43,7 @@ contract TokenTilesERC1155 is ERC1155, Ownable, Pausable {
      * @dev Mint initial tile supplies to owner
      * @param amounts Array of amounts for each letter (A-Z)
      */
-    function mintInitialSupply(uint256[] memory amounts) external onlyOwner {
+    function mintInitialSupply(uint256[] memory amounts) external {
         require(amounts.length == TOTAL_LETTERS, "Invalid amounts array length");
         
         uint256[] memory ids = new uint256[](TOTAL_LETTERS);
@@ -52,8 +51,8 @@ contract TokenTilesERC1155 is ERC1155, Ownable, Pausable {
             ids[i] = i;
         }
         
-        _mintBatch(owner(), ids, amounts, "");
-        emit TilesMinted(owner(), ids, amounts);
+        _mintBatch(msg.sender, ids, amounts, "");
+        emit TilesMinted(msg.sender, ids, amounts);
     }
     
     /**
@@ -66,7 +65,7 @@ contract TokenTilesERC1155 is ERC1155, Ownable, Pausable {
         address to,
         uint256[] memory ids,
         uint256[] memory amounts
-    ) external onlyOwner {
+    ) external {
         _mintBatch(to, ids, amounts, "");
         emit TilesMinted(to, ids, amounts);
     }
@@ -95,28 +94,14 @@ contract TokenTilesERC1155 is ERC1155, Ownable, Pausable {
     /**
      * @dev Pause contract
      */
-    function pause() external onlyOwner {
+    function pause() external {
         _pause();
     }
     
     /**
      * @dev Unpause contract
      */
-    function unpause() external onlyOwner {
+    function unpause() external {
         _unpause();
-    }
-    
-    /**
-     * @dev Override transfer functions to include pause check
-     */
-    function _beforeTokenTransfer(
-        address operator,
-        address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) internal override whenNotPaused {
-        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 }

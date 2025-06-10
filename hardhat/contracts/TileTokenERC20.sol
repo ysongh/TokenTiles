@@ -2,14 +2,13 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title TileTokenERC20
  * @dev ERC20 reward token for TokenTiles game
  */
-contract TileTokenERC20 is ERC20, Ownable, Pausable {
+contract TileTokenERC20 is ERC20, Pausable {
     uint256 public constant MAX_SUPPLY = 1000000000 * 10**18; // 1 billion tokens
     
     // Game contract that can mint rewards
@@ -20,14 +19,14 @@ contract TileTokenERC20 is ERC20, Ownable, Pausable {
     
     constructor() ERC20("TileToken", "TILE") {
         // Mint initial supply to owner
-        _mint(owner(), 100000000 * 10**18); // 100 million initial supply
+        _mint(msg.sender, 100000000 * 10**18); // 100 million initial supply
     }
     
     /**
      * @dev Set the game contract address
      * @param _gameContract Address of the game contract
      */
-    function setGameContract(address _gameContract) external onlyOwner {
+    function setGameContract(address _gameContract) external {
         gameContract = _gameContract;
         emit GameContractSet(_gameContract);
     }
@@ -48,25 +47,14 @@ contract TileTokenERC20 is ERC20, Ownable, Pausable {
     /**
      * @dev Pause contract
      */
-    function pause() external onlyOwner {
+    function pause() external {
         _pause();
     }
     
     /**
      * @dev Unpause contract
      */
-    function unpause() external onlyOwner {
+    function unpause() external {
         _unpause();
-    }
-    
-    /**
-     * @dev Override transfer functions to include pause check
-     */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal override whenNotPaused {
-        super._beforeTokenTransfer(from, to, amount);
     }
 }
