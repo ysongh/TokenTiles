@@ -4,18 +4,17 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
+import "./TokenTilesERC1155.sol";
+import "./TileTokenERC20.sol";
 
 /**
  * @title TokenTilesGame
  * @dev Main game contract managing sessions and word validation
  */
-contract TokenTilesGame is Ownable, Pausable, ReentrancyGuard {
-    using Counters for Counters.Counter;
-    
+contract TokenTilesGame is Ownable, Pausable, ReentrancyGuard {    
     // Contract references
     TokenTilesERC1155 public immutable tilesContract;
     TileTokenERC20 public immutable rewardToken;
@@ -38,7 +37,7 @@ contract TokenTilesGame is Ownable, Pausable, ReentrancyGuard {
     }
     
     // Current active session
-    Counters.Counter private _sessionIds;
+    uint256 private _sessionIds;
     GameSession public currentSession;
     bool public hasActiveSession;
     

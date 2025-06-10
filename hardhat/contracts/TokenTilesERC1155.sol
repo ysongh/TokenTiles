@@ -3,15 +3,13 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title TokenTilesERC1155
  * @dev ERC1155 contract for letter tiles (A-Z)
  */
-contract TokenTilesERC1155 is ERC1155, Ownable, Pausable {
-    using Counters for Counters.Counter;
-    
+contract TokenTilesERC1155 is ERC1155, Ownable, Pausable {    
     // Tile IDs: A=0, B=1, ..., Z=25
     uint256 public constant TOTAL_LETTERS = 26;
     
