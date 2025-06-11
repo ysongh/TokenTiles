@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Shuffle, Trophy, Wallet, Play, CheckCircle, Clock, Star, Coins } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Coins } from 'lucide-react';
 
 interface Game {
   id: number;
@@ -47,6 +48,8 @@ const mockGames: Game[] = [
 ];
 
 function Lobby() {
+  const navigate = useNavigate();
+
   const [availableGames, setAvailableGames] = useState<Game[]>(mockGames);
 
   const shuffleWord = (word: string) => {
@@ -84,7 +87,10 @@ function Lobby() {
                   <span>{game.timeLimit}</span>
                 </div>
                 
-                <button className="w-full mt-2 bg-blue-600 hover:bg-blue-700 py-2 rounded text-sm font-semibold transition-colors">
+                <button
+                  className="w-full mt-2 bg-blue-600 hover:bg-blue-700 py-2 rounded text-sm font-semibold transition-colors"
+                  onClick={() => navigate("/test")}
+                >
                   Join Game
                 </button>
               </div>

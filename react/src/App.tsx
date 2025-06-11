@@ -4,6 +4,7 @@ import { HashRouter, Route, Routes } from "react-router-dom"
 
 import { ConnectMenu } from "./components/ConnectMenu";
 import Lobby from "./pages/Lobby";
+import TokenTiles from "./pages/TokenTiles";
 
 function App() {
   useEffect(() => {
@@ -16,7 +17,7 @@ function App() {
       <Routes>
         <Route
           path="/test"
-          element={<h1>Test</h1>} />
+          element={<TokenTiles />} />
         <Route
           path="/"
           element={<Lobby />} />
