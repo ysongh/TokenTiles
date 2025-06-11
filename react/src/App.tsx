@@ -2,6 +2,8 @@ import { sdk } from "@farcaster/frame-sdk";
 import { useEffect } from "react";
 import { useAccount, useConnect, useSignMessage } from "wagmi";
 
+import Lobby from "./pages/Lobby";
+
 function App() {
   useEffect(() => {
     sdk.actions.ready();
@@ -25,6 +27,7 @@ function ConnectMenu() {
         <div>Connected account:</div>
         <div>{address}</div>
         <SignButton />
+        <Lobby />
       </>
     );
   }
