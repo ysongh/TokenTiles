@@ -1,5 +1,6 @@
 import { sdk } from "@farcaster/frame-sdk";
 import { useEffect } from "react";
+import { HashRouter, Route, Routes } from "react-router-dom"
 
 import { ConnectMenu } from "./components/ConnectMenu";
 import Lobby from "./pages/Lobby";
@@ -10,11 +11,17 @@ function App() {
   }, []);
 
   return (
-    <>
-      <div className="bg-blue-300">Mini App + Vite + TS + React + Wagmi</div>
+    <HashRouter>
       <ConnectMenu />
-      <Lobby />
-    </>
+      <Routes>
+        <Route
+          path="/test"
+          element={<h1>Test</h1>} />
+        <Route
+          path="/"
+          element={<Lobby />} />
+      </Routes>
+    </HashRouter>
   );
 }
 
