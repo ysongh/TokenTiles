@@ -23,3 +23,7 @@ pnpm-lock.yaml
 *.njsproj
 *.sln
 *.sw?
+
+# Hardhat files
+cache
+artifacts

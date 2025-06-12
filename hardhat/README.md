@@ -6,3 +6,6 @@
  REPORT_GAS=true npx hardhat test
  npx hardhat node
  ```
+
+ # Deploy to localhost
+`npx hardhat ignition deploy ./ignition/modules/TokenTiles.js --network localhost`
