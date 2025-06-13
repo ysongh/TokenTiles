@@ -1,6 +1,8 @@
 import { Shuffle, Wallet } from "lucide-react";
 import { useAccount, useConnect } from "wagmi";
 
+import { formatAddress } from '../utils/format';
+
 export function ConnectMenu() {
   const { isConnected, address } = useAccount();
   const { connect, connectors } = useConnect();
@@ -21,7 +23,7 @@ export function ConnectMenu() {
           <div className="flex items-center space-x-4">
             <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
               <span className="text-sm text-gray-300">Connected:</span>
-              <p className="font-mono text-sm">{address}</p>
+              <p className="font-mono text-sm">{formatAddress(address || "")}</p>
             </div>
             <button
               className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
