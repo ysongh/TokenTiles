@@ -76,7 +76,7 @@ const TokenTiles: React.FC = () => {
           </div>
         )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="w-[500px] mx-auto">
             {/* Current Game */}
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
               {currentGame ? (

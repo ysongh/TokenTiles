@@ -58,7 +58,7 @@ function Lobby() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 w-[600px]">
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
           <h3 className="text-xl font-bold mb-4 flex items-center">
             <Coins className="w-6 h-6 mr-2 text-yellow-400" />
