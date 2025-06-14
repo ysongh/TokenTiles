@@ -1,64 +1,17 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Coins } from 'lucide-react';
-import { useWriteContract } from "wagmi";
-import { hardhat } from "wagmi/chains";
+import { useReadContract, useWriteContract } from "wagmi";
 
 import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json"
-
-interface Game {
-  id: number;
-  scrambledWord: string;
-  originalWord: string;
-  timeLimit: number;
-  entryFee: string;
-  prize: string;
-  isActive: boolean;
-  winner?: string;
-  submissions: number;
-}
-
-const mockGames: Game[] = [
-  {
-    id: 1,
-    scrambledWord: 'CNBKALOHCI',
-    originalWord: 'BLOCKCHAIN',
-    timeLimit: 300,
-    entryFee: '0.01',
-    prize: '0.05',
-    isActive: true,
-    submissions: 3
-  },
-  {
-    id: 2,
-    scrambledWord: 'MMTARSCTON',
-    originalWord: 'SMARTCONTRACT',
-    timeLimit: 240,
-    entryFee: '0.005',
-    prize: '0.025',
-    isActive: true,
-    submissions: 1
-  },
-  {
-    id: 3,
-    scrambledWord: 'EEDCFI',
-    originalWord: 'DEFI',
-    timeLimit: 180,
-    entryFee: '0.002',
-    prize: '0.01',
-    isActive: true,
-    submissions: 7
-  }
-];
 
 function Lobby() {
   const navigate = useNavigate();
 
-  const [availableGames, setAvailableGames] = useState<Game[]>(mockGames);
-
-  const shuffleWord = (word: string) => {
-    return word.split('').sort(() => Math.random() - 0.5).join('');
-  };
+  const { data: currentSession = [] } = useReadContract({
+    address: import.meta.env.VITE_TOKENTILESGAME,
+    abi: TokenTilesGame.abi,
+    functionName: 'currentSession',
+  }) as { data: any  };
 
   const {
     writeContract,
@@ -73,6 +26,8 @@ function Lobby() {
       functionName: "startNewSession",
     })
   }
+
+  console.log(currentSession);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
@@ -96,35 +51,29 @@ function Lobby() {
           </h3>
           
           <div className="space-y-3">
-            {availableGames.map((game) => (
-              <div
-                key={game.id}
-                className="bg-white/10 rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="font-mono text-lg font-bold tracking-wide">
-                    {shuffleWord(game.scrambledWord)}
-                  </div>
-                  <div className="text-right">
-                    <div className="text-yellow-400 font-semibold">{game.prize} ETH</div>
-                    <div className="text-xs text-gray-400">Prize</div>
-                  </div>
+            <div className="bg-white/10 rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer">
+              <div className="flex justify-between items-start mb-2">
+                <div className="font-mono text-lg font-bold tracking-wide">
+                  {currentSession[0]?.toString()}
                 </div>
-                
-                <div className="flex justify-between text-sm text-gray-300">
-                  <span>Fee: {game.entryFee} ETH</span>
-                  <span>{game.submissions} players</span>
-                  <span>{game.timeLimit}</span>
+                <div className="text-right">
+                  <div className="text-yellow-400 font-semibold">{currentSession[1] ? "Started" : "Not Started"}</div>
                 </div>
-                
-                <button
-                  className="w-full mt-2 bg-blue-600 hover:bg-blue-700 py-2 rounded text-sm font-semibold transition-colors"
-                  onClick={() => navigate("/test")}
-                >
-                  Join Game
-                </button>
               </div>
-            ))}
+              
+              <div className="flex justify-between text-sm text-gray-300">
+                <span>{currentSession[2]?.toString()} Players</span>
+                <span>{currentSession[3]?.toString()}</span>
+                <span>{currentSession[4]?.toString()}</span>
+              </div>
+              
+              <button
+                className="w-full mt-2 bg-blue-600 hover:bg-blue-700 py-2 rounded text-sm font-semibold transition-colors"
+                onClick={() => navigate("/test")}
+              >
+                Join Game
+              </button>
+            </div>
           </div>
         </div>
       </div>
