@@ -1,11 +1,21 @@
 import { Shuffle, Wallet } from "lucide-react";
-import { useAccount, useConnect } from "wagmi";
+import {
+  useAccount,
+  useConnect,
+  useChains,
+  useChainId,
+  useSignMessage
+} from "wagmi";
 
 import { formatAddress } from '../utils/format';
 
 export function ConnectMenu() {
   const { isConnected, address } = useAccount();
   const { connect, connectors } = useConnect();
+  const chains = useChains();
+  const chainId = useChainId();
+
+  const currentChain = chains.find(chain => chain.id === chainId);
 
   return (
     <div className="bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
@@ -22,7 +32,7 @@ export function ConnectMenu() {
         {isConnected ? (
           <div className="flex items-center space-x-4">
             <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-              <span className="text-sm text-gray-300">Connected:</span>
+              <span className="text-sm text-gray-300">Connected: {currentChain ? currentChain.name : 'Not connected'}</span>
               <p className="font-mono text-sm">{formatAddress(address || "")}</p>
             </div>
             <button
