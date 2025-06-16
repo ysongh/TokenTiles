@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Play, CheckCircle, Clock } from 'lucide-react';
+import { useWriteContract } from "wagmi";
+
+import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json"
 
 interface Game {
   id: number;
@@ -57,6 +60,20 @@ const TokenTiles: React.FC = () => {
   const [message, setMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const {
+    writeContract,
+    data: txHash,
+    isPending
+  } = useWriteContract();
+
+  const joinGame = () => {
+    writeContract({
+      address: import.meta.env.VITE_TOKENTILESGAME,
+      abi: TokenTilesGame.abi,
+      functionName: "joinGame",
+    })
+  }
+
   const submitAnswer = () => {
     if (!currentGame || !userInput.trim()) return;
   };
@@ -77,6 +94,19 @@ const TokenTiles: React.FC = () => {
         )}
 
           <div className="w-[500px] mx-auto">
+            <button
+              onClick={joinGame}
+              className="w-full bg-green-200 hover:bg-green-300 text-gray-800 py-2 px-6 rounded-lg transition-colors mb-3"
+            >
+             Join Game
+            </button>
+            {isPending && <div className="my-4">Pending...</div>}
+            {txHash && (
+              <div className="mb-4">
+                {txHash}
+              </div>
+            )}
+
             {/* Current Game */}
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
               {currentGame ? (

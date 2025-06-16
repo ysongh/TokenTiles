@@ -3,8 +3,7 @@ import {
   useAccount,
   useConnect,
   useChains,
-  useChainId,
-  useSignMessage
+  useChainId
 } from "wagmi";
 
 import { formatAddress } from '../utils/format';
