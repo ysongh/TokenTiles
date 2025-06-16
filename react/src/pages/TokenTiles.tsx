@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Play, CheckCircle, Clock } from 'lucide-react';
-import { useWriteContract } from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
 import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json"
 
@@ -51,6 +51,8 @@ const mockGames: Game[] = [
 ];
 
 const TokenTiles: React.FC = () => {
+  const { address } = useAccount();
+
   const [currentGame, setCurrentGame] = useState<Game | null>(mockGames[0]);
   const [userInput, setUserInput] = useState('');
   const [timeLeft, setTimeLeft] = useState(0);
@@ -59,6 +61,13 @@ const TokenTiles: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+
+  const { data: playerTiles } = useReadContract({
+    address: import.meta.env.VITE_TOKENTILESGAME,
+    abi: TokenTilesGame.abi,
+    functionName: 'getPlayerTiles',
+    args: [address]
+  }) as { data: any  };
 
   const {
     writeContract,
@@ -83,6 +92,8 @@ const TokenTiles: React.FC = () => {
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  console.log(playerTiles, address);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
