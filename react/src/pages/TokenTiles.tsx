@@ -62,10 +62,10 @@ const TokenTiles: React.FC = () => {
   const [message, setMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const { data: playerTiles } = useReadContract({
+  const { data: playerWords } = useReadContract({
     address: import.meta.env.VITE_TOKENTILESGAME,
     abi: TokenTilesGame.abi,
-    functionName: 'getPlayerTiles',
+    functionName: 'getPlayerWords',
     args: [address]
   }) as { data: any  };
 
@@ -85,6 +85,13 @@ const TokenTiles: React.FC = () => {
 
   const submitAnswer = () => {
     if (!currentGame || !userInput.trim()) return;
+
+    writeContract({
+      address: import.meta.env.VITE_TOKENTILESGAME,
+      abi: TokenTilesGame.abi,
+      functionName: "submitWord",
+      args: [userInput],
+    })
   };
 
   const formatTime = (seconds: number) => {
@@ -93,7 +100,7 @@ const TokenTiles: React.FC = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  console.log(playerTiles, address);
+  console.log(playerWords, address);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
