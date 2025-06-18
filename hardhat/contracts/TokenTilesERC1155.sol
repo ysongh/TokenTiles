@@ -59,14 +59,16 @@ contract TokenTilesERC1155 is ERC1155, Pausable {
      * @dev Mint specific tiles to an address
      * @param to Address to mint to
      * @param ids Array of tile IDs
+     * @param data Value of tile
      * @param amounts Array of amounts
      */
     function mintTiles(
         address to,
         uint256[] memory ids,
-        uint256[] memory amounts
+        uint256[] memory amounts,
+        bytes memory data
     ) external {
-        _mintBatch(to, ids, amounts, "");
+        _mintBatch(to, ids, amounts, data);
         emit TilesMinted(to, ids, amounts);
     }
     

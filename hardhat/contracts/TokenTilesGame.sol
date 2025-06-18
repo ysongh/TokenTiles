@@ -118,7 +118,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     /**
      * @dev Join the current game session
      */
-    function joinGame() external whenNotPaused nonReentrant {
+   function joinGame() external whenNotPaused nonReentrant {
         require(hasActiveSession, "No active session");
         require(currentSession.active, "Session not active");
         require(!currentSession.players[msg.sender], "Player already joined");
@@ -126,19 +126,14 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         // Generate 7 random tiles for the player
         uint256[] memory playerTiles = _generateRandomTiles(msg.sender);
         
-        // Transfer tiles from contract to player
+        // Mint tiles directly to the player instead of transferring
         uint256[] memory amounts = new uint256[](TILES_PER_PLAYER);
         for (uint256 i = 0; i < TILES_PER_PLAYER; i++) {
             amounts[i] = 1;
         }
         
-        tilesContract.safeBatchTransferFrom(
-            address(this),
-            msg.sender,
-            playerTiles,
-            amounts,
-            ""
-        );
+        // Mint the tiles to the player
+        tilesContract.mintTiles(msg.sender, playerTiles, amounts, "");
         
         // Update session state
         currentSession.players[msg.sender] = true;

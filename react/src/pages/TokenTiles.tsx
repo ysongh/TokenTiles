@@ -65,7 +65,7 @@ const TokenTiles: React.FC = () => {
   const { data: playerWords } = useReadContract({
     address: import.meta.env.VITE_TOKENTILESGAME,
     abi: TokenTilesGame.abi,
-    functionName: 'getPlayerWords',
+    functionName: 'getPlayerTiles',
     args: [address]
   }) as { data: any  };
 
