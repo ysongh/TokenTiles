@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Play, CheckCircle, Clock } from 'lucide-react';
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
-import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json"
+import TileTokenERC20 from "../artifacts/contracts/TileTokenERC20.sol/TileTokenERC20.json";
+import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json";
 
 interface Game {
   id: number;
@@ -91,6 +92,13 @@ const TokenTiles: React.FC = () => {
   const [message, setMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const { data: tokenBalance } = useReadContract({
+    address: import.meta.env.VITE_TILETOKENERC20,
+    abi: TileTokenERC20.abi,
+    functionName: 'balanceOf',
+    args: [address]
+  }) as { data: any  };
+
   const { data: playerWords = [] } = useReadContract({
     address: import.meta.env.VITE_TOKENTILESGAME,
     abi: TokenTilesGame.abi,
@@ -177,7 +185,7 @@ const TokenTiles: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center justify-center space-x-4 text-sm text-gray-300 mb-4">
-                      <span>Prize: {currentGame.prize} ETH</span>
+                      <span>Token Balance: {Number(tokenBalance)} TILE</span>
                       <span>•</span>
                       <span>{currentGame.submissions} players</span>
                     </div>
