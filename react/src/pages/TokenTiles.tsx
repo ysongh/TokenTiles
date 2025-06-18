@@ -16,6 +16,35 @@ interface Game {
   submissions: number;
 }
 
+const numberToLetter = {
+  1: 'A',
+  2: 'B',
+  3: 'C',
+  4: 'D',
+  5: 'E',
+  6: 'F',
+  7: 'G',
+  8: 'H',
+  9: 'I',
+  10: 'J',
+  11: 'K',
+  12: 'L',
+  13: 'M',
+  14: 'N',
+  15: 'O',
+  16: 'P',
+  17: 'Q',
+  18: 'R',
+  19: 'S',
+  20: 'T',
+  21: 'U',
+  22: 'V',
+  23: 'W',
+  24: 'X',
+  25: 'Y',
+  26: 'Z'
+};
+
 // Mock games data
 const mockGames: Game[] = [
   {
@@ -62,7 +91,7 @@ const TokenTiles: React.FC = () => {
   const [message, setMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const { data: playerWords } = useReadContract({
+  const { data: playerWords = [] } = useReadContract({
     address: import.meta.env.VITE_TOKENTILESGAME,
     abi: TokenTilesGame.abi,
     functionName: 'getPlayerTiles',
@@ -140,8 +169,10 @@ const TokenTiles: React.FC = () => {
                   <div className="text-center mb-6">
                     <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-6 mb-4">
                       <h4 className="text-sm text-gray-300 mb-2">Unscramble this word:</h4>
-                      <div className="text-3xl font-bold tracking-widest">
-                        {currentGame.scrambledWord}
+                      <div className="text-3xl font-bold tracking-widest flex justify-center">
+                        {playerWords.map((p: BigInt, index: number) => (
+                          <p key={index}>{numberToLetter[Number(p)]}</p>
+                        ))}
                       </div>
                     </div>
                     
