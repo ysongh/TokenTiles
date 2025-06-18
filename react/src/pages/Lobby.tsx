@@ -76,6 +76,13 @@ function Lobby() {
             </div>
           </div>
         </div>
+
+        <button
+          onClick={() => navigate("/leaderboard")}
+          className="w-full mt-3 bg-green-200 hover:bg-green-300 text-gray-800 py-2 px-6 rounded-lg transition-colors mb-3"
+        >
+          Leaderboard
+        </button>
       </div>
     </div>
   )

@@ -5,6 +5,7 @@ import { HashRouter, Route, Routes } from "react-router-dom"
 import { ConnectMenu } from "./components/ConnectMenu";
 import Lobby from "./pages/Lobby";
 import TokenTiles from "./pages/TokenTiles";
+import Leaderboard from "./pages/Leaderboard";
 
 function App() {
   useEffect(() => {
@@ -15,6 +16,9 @@ function App() {
     <HashRouter>
       <ConnectMenu />
       <Routes>
+        <Route
+          path="/leaderboard"
+          element={<Leaderboard />} />
         <Route
           path="/test"
           element={<TokenTiles />} />
