@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Play, CheckCircle, Clock } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Play, CheckCircle, Clock, RotateCcw } from 'lucide-react';
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
 import TileTokenERC20 from "../artifacts/contracts/TileTokenERC20.sol/TileTokenERC20.json";
@@ -92,6 +92,10 @@ const TokenTiles: React.FC = () => {
   const [message, setMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // Letter changing state
+  const [playerLetters, setPlayerLetters] = useState<string[]>([]);
+  const [changesRemaining, setChangesRemaining] = useState(3); // Allow 3 letter changes per game
+
   const { data: tokenBalance } = useReadContract({
     address: import.meta.env.VITE_TILETOKENERC20,
     abi: TileTokenERC20.abi,
@@ -112,6 +116,15 @@ const TokenTiles: React.FC = () => {
     isPending
   } = useWriteContract();
 
+  // Initialize player letters from contract data
+  useEffect(() => {
+    if (playerWords && playerWords.length > 0) {
+      const letters = playerWords.map((p: BigInt) => numberToLetter[Number(p) + 1]);
+      setPlayerLetters(letters);
+      setChangesRemaining(3); // Reset changes when new game starts
+    }
+  }, [playerWords]);
+
   const joinGame = () => {
     writeContract({
       address: import.meta.env.VITE_TOKENTILESGAME,
@@ -129,6 +142,46 @@ const TokenTiles: React.FC = () => {
       functionName: "submitWord",
       args: [userInput],
     })
+  };
+
+  const handleLetterClick = (index: number) => {
+    if (changesRemaining <= 0) {
+      setMessage('No more letter changes remaining!');
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
+
+    // Generate a random letter that's different from the current one
+    const currentLetter = playerLetters[index];
+    const allLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const availableLetters = allLetters.split('').filter(letter => letter !== currentLetter);
+    const randomLetter = availableLetters[Math.floor(Math.random() * availableLetters.length)];
+
+    // Update the letter at the selected index
+    const newLetters = [...playerLetters];
+    newLetters[index] = randomLetter;
+    setPlayerLetters(newLetters);
+    
+    // Decrease changes remaining
+    setChangesRemaining(prev => prev - 1);
+    
+    // Update input field with new arrangement
+    setUserInput(newLetters.join(''));
+    
+    // Show feedback
+    setMessage(`Changed ${currentLetter} to ${randomLetter}! ${changesRemaining - 1} changes remaining.`);
+    setTimeout(() => setMessage(''), 2000);
+  };
+
+  const resetLetters = () => {
+    if (playerWords && playerWords.length > 0) {
+      const originalLetters = playerWords.map((p: BigInt) => numberToLetter[Number(p)]);
+      setPlayerLetters(originalLetters);
+      setUserInput('');
+      setChangesRemaining(3); // Reset changes
+      setMessage('Letters reset to original scrambled word!');
+      setTimeout(() => setMessage(''), 2000);
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -177,11 +230,48 @@ const TokenTiles: React.FC = () => {
                   <div className="text-center mb-6">
                     <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-6 mb-4">
                       <h4 className="text-sm text-gray-300 mb-2">Unscramble this word:</h4>
-                      <div className="text-3xl font-bold tracking-widest flex justify-center">
-                        {playerWords.map((p: BigInt, index: number) => (
-                          <p key={index}>{numberToLetter[Number(p)]}</p>
+                      
+                      {/* Letter Changes Info */}
+                      <div className="text-xs text-yellow-300 mb-3">
+                        Changes remaining: {changesRemaining}
+                      </div>
+                      
+                      {/* Interactive Letter Tiles */}
+                      <div className="flex justify-center gap-2 mb-4">
+                        {playerLetters.map((letter, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleLetterClick(index)}
+                            disabled={changesRemaining <= 0}
+                            className={`
+                              w-12 h-12 rounded-lg font-bold text-xl transition-all transform hover:scale-110
+                              ${changesRemaining > 0 
+                                ? 'bg-white/20 hover:bg-blue-500/50 hover:ring-2 hover:ring-blue-300 text-white cursor-pointer' 
+                                : 'bg-gray-500/50 text-gray-400 cursor-not-allowed'
+                              }
+                            `}
+                          >
+                            {letter}
+                          </button>
                         ))}
                       </div>
+
+                      {/* Instructions */}
+                      <div className="text-xs text-gray-300 mb-2">
+                        {changesRemaining > 0 
+                          ? "Click any letter to change it to a random letter" 
+                          : "No more changes available - use reset to start over"
+                        }
+                      </div>
+
+                      {/* Reset Button */}
+                      <button
+                        onClick={resetLetters}
+                        className="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors flex items-center gap-1 mx-auto"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        Reset Letters & Changes
+                      </button>
                     </div>
                     
                     <div className="flex items-center justify-center space-x-4 text-sm text-gray-300 mb-4">
@@ -195,8 +285,15 @@ const TokenTiles: React.FC = () => {
                     <input
                       type="text"
                       value={userInput}
-                      onChange={(e) => setUserInput(e.target.value.toUpperCase())}
-                      placeholder="Enter your answer..."
+                      onChange={(e) => {
+                        const newValue = e.target.value.toUpperCase();
+                        setUserInput(newValue);
+                        // Update letter arrangement if manually typing
+                        if (newValue.length === playerLetters.length) {
+                          setPlayerLetters(newValue.split(''));
+                        }
+                      }}
+                      placeholder="Enter your answer or use tiles above..."
                       className="w-full px-4 py-3 bg-white/20 rounded-lg border border-white/30 text-center text-lg font-semibold tracking-wide placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       disabled={isLoading}
                     />
