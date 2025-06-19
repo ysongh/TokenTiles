@@ -151,26 +151,12 @@ const TokenTiles: React.FC = () => {
       return;
     }
 
-    // Generate a random letter that's different from the current one
-    const currentLetter = playerLetters[index];
-    const allLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const availableLetters = allLetters.split('').filter(letter => letter !== currentLetter);
-    const randomLetter = availableLetters[Math.floor(Math.random() * availableLetters.length)];
-
-    // Update the letter at the selected index
-    const newLetters = [...playerLetters];
-    newLetters[index] = randomLetter;
-    setPlayerLetters(newLetters);
-    
-    // Decrease changes remaining
-    setChangesRemaining(prev => prev - 1);
-    
-    // Update input field with new arrangement
-    setUserInput(newLetters.join(''));
-    
-    // Show feedback
-    setMessage(`Changed ${currentLetter} to ${randomLetter}! ${changesRemaining - 1} changes remaining.`);
-    setTimeout(() => setMessage(''), 2000);
+    writeContract({
+      address: import.meta.env.VITE_TOKENTILESGAME,
+      abi: TokenTilesGame.abi,
+      functionName: "swapTile",
+      args: [index]
+    })
   };
 
   const resetLetters = () => {
