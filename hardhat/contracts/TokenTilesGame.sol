@@ -152,13 +152,11 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         require(currentSession.active, "Session not active");
         require(currentSession.players[msg.sender], "Player not in session");
         
-        // Convert to uppercase for consistency
-        string memory upperWord = _toUpper(word);
-        bool isValid = validWords[upperWord];
+        bool isValid = validWords[word];
         
         if (isValid) {
             // Calculate reward based on word length
-            uint256 wordLength = bytes(upperWord).length;
+            uint256 wordLength = bytes(word).length;
             uint256 reward = BASE_REWARD + (wordLength * WORD_LENGTH_MULTIPLIER);
             
             // Mint reward tokens
@@ -175,9 +173,9 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         }
         
         // Store submitted word
-        currentSession.submittedWords[msg.sender].push(upperWord);
+        currentSession.submittedWords[msg.sender].push(word);
         
-        emit WordSubmitted(currentSession.sessionId, msg.sender, upperWord, isValid);
+        emit WordSubmitted(currentSession.sessionId, msg.sender, word, isValid);
     }
     
     /**
@@ -202,26 +200,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         }
         
         return tiles;
-    }
-    
-    /**
-     * @dev Convert string to uppercase
-     * @param str Input string
-     * @return Uppercase string
-     */
-    function _toUpper(string memory str) private pure returns (string memory) {
-        bytes memory bStr = bytes(str);
-        bytes memory bUpper = new bytes(bStr.length);
-        
-        for (uint256 i = 0; i < bStr.length; i++) {
-            if (bStr[i] >= 0x61 && bStr[i] <= 0x7A) {
-                bUpper[i] = bytes1(uint8(bStr[i]) - 32);
-            } else {
-                bUpper[i] = bStr[i];
-            }
-        }
-        
-        return string(bUpper);
     }
     
     /**
@@ -264,7 +242,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
      */
     function addValidWords(string[] memory words) external {
         for (uint256 i = 0; i < words.length; i++) {
-            validWords[_toUpper(words[i])] = true;
+            validWords[words[i]] = true;
         }
     }
     
