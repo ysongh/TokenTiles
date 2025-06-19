@@ -12,6 +12,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^0.15.11",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.5.0",
     "hardhat": "^2.24.2"
   },
   "packageManager": "npm@11.0.0+sha512.11dff29565d2297c74e7c594a9762581bde969f0aa5cbe6f5b3644bf008a16c065ece61094d9ffbb81125be38df8e1ba43eb8244b3d30c61eb797e9a2440e3ec",
