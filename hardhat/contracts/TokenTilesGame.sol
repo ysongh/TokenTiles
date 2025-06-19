@@ -23,7 +23,8 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     uint256 public constant TILES_PER_PLAYER = 7;
     uint256 public constant BASE_REWARD = 10 * 10**18; // 10 TILE tokens
     uint256 public constant WORD_LENGTH_MULTIPLIER = 2 * 10**18; // 2 TILE per letter
-    
+    uint256 public constant MAX_SWAPS_PER_SESSION = 3;
+
     // Game session structure
     struct GameSession {
         uint256 sessionId;
@@ -32,6 +33,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         mapping(address => bool) players;
         mapping(address => uint256[]) playerTiles;
         mapping(address => string[]) submittedWords;
+        mapping(address => uint256) playerSwapsUsed;
         uint256 startTime;
         uint256 endTime;
     }
@@ -44,6 +46,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     // Player statistics
     mapping(address => uint256) public playerTotalRewards;
     mapping(address => uint256) public playerWordsSubmitted;
+    mapping(address => uint256) public playerTotalSwaps;
     
     // Leaderboard
     address[] public leaderboard;
@@ -59,7 +62,8 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     event WordSubmitted(uint256 indexed sessionId, address indexed player, string word, bool valid);
     event TokensRewarded(address indexed player, uint256 amount);
     event LeaderboardUpdated(address indexed player, uint256 newTotal);
-    
+    event TileSwapped(uint256 indexed sessionId, address indexed player, uint256 oldTile, uint256 newTile, uint256 swapsRemaining);
+
     constructor(
         address _tilesContract,
         address _rewardToken
@@ -142,6 +146,53 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         
         emit PlayerJoined(currentSession.sessionId, msg.sender, playerTiles);
     }
+
+    /**
+     * @dev Swap a player's tile with a random new tile
+     * @param tileIndex Index of the tile to swap (0-6)
+     */
+    function swapTile(uint256 tileIndex) external whenNotPaused nonReentrant {
+        require(hasActiveSession, "No active session");
+        require(currentSession.active, "Session not active");
+        require(currentSession.players[msg.sender], "Player not in session");
+        require(tileIndex < TILES_PER_PLAYER, "Invalid tile index");
+        require(currentSession.playerSwapsUsed[msg.sender] < MAX_SWAPS_PER_SESSION, "Max swaps reached");
+        
+        uint256[] storage playerTiles = currentSession.playerTiles[msg.sender];
+        uint256 oldTile = playerTiles[tileIndex];
+        
+        // Generate a new random tile
+        uint256 newTile = _generateSingleRandomTile(msg.sender, currentSession.playerSwapsUsed[msg.sender]);
+        
+        // Transfer old tile back to contract
+        tilesContract.safeTransferFrom(
+            msg.sender,
+            address(this),
+            oldTile,
+            1,
+            ""
+        );
+        
+        // Transfer new tile to player
+        tilesContract.safeTransferFrom(
+            address(this),
+            msg.sender,
+            newTile,
+            1,
+            ""
+        );
+        
+        // Update player's tile array
+        playerTiles[tileIndex] = newTile;
+        
+        // Increment swap counters
+        currentSession.playerSwapsUsed[msg.sender]++;
+        playerTotalSwaps[msg.sender]++;
+        
+        uint256 swapsRemaining = MAX_SWAPS_PER_SESSION - currentSession.playerSwapsUsed[msg.sender];
+        
+        emit TileSwapped(currentSession.sessionId, msg.sender, oldTile, newTile, swapsRemaining);
+    }
     
     /**
      * @dev Submit a word for validation and rewards
@@ -200,6 +251,25 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         }
         
         return tiles;
+    }
+
+    /**
+     * @dev Generate a single random tile for swapping
+     * @param player Player address for entropy
+     * @param nonce Additional entropy source
+     * @return Single tile ID
+     */
+    function _generateSingleRandomTile(address player, uint256 nonce) private view returns (uint256) {
+        uint256 randomValue = uint256(
+            keccak256(abi.encodePacked(
+                block.timestamp,
+                block.prevrandao,
+                player,
+                nonce,
+                gasleft()
+            ))
+        );
+        return randomValue % 26; // 0-25 for A-Z
     }
     
     /**
