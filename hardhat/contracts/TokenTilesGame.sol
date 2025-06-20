@@ -303,6 +303,16 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
             validWords[words[i]] = true;
         }
     }
+
+    /**
+     * @dev Get player's remaining swaps in current session
+     * @param player Player address
+     * @return Number of swaps remaining
+     */
+    function getPlayerSwapsRemaining(address player) external view returns (uint256) {
+        require(currentSession.players[player], "Player not in current session");
+        return MAX_SWAPS_PER_SESSION - currentSession.playerSwapsUsed[player];
+    }
     
     /**
      * @dev Get player's tiles in current session

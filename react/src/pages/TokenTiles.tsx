@@ -94,7 +94,6 @@ const TokenTiles: React.FC = () => {
 
   // Letter changing state
   const [playerLetters, setPlayerLetters] = useState<string[]>([]);
-  const [changesRemaining, setChangesRemaining] = useState(3); // Allow 3 letter changes per game
 
   const { data: tokenBalance } = useReadContract({
     address: import.meta.env.VITE_TILETOKENERC20,
@@ -110,6 +109,13 @@ const TokenTiles: React.FC = () => {
     args: [address]
   }) as { data: any  };
 
+  const { data: changesRemaining = 0 } = useReadContract({
+    address: import.meta.env.VITE_TOKENTILESGAME,
+    abi: TokenTilesGame.abi,
+    functionName: 'getPlayerSwapsRemaining',
+    args: [address]
+  }) as { data: any  };
+
   const {
     writeContract,
     data: txHash,
@@ -121,7 +127,6 @@ const TokenTiles: React.FC = () => {
     if (playerWords && playerWords.length > 0) {
       const letters = playerWords.map((p: BigInt) => numberToLetter[Number(p) + 1]);
       setPlayerLetters(letters);
-      setChangesRemaining(3); // Reset changes when new game starts
     }
   }, [playerWords]);
 
@@ -164,7 +169,6 @@ const TokenTiles: React.FC = () => {
       const originalLetters = playerWords.map((p: BigInt) => numberToLetter[Number(p)]);
       setPlayerLetters(originalLetters);
       setUserInput('');
-      setChangesRemaining(3); // Reset changes
       setMessage('Letters reset to original scrambled word!');
       setTimeout(() => setMessage(''), 2000);
     }
@@ -219,7 +223,7 @@ const TokenTiles: React.FC = () => {
                       
                       {/* Letter Changes Info */}
                       <div className="text-xs text-yellow-300 mb-3">
-                        Changes remaining: {changesRemaining}
+                        Changes remaining: {Number(changesRemaining)}
                       </div>
                       
                       {/* Interactive Letter Tiles */}
