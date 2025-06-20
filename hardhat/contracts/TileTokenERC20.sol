@@ -27,6 +27,7 @@ contract TileTokenERC20 is ERC20, Pausable {
      * @param _gameContract Address of the game contract
      */
     function setGameContract(address _gameContract) external {
+        require(gameContract == address(0), "Game contract already set");
         gameContract = _gameContract;
         emit GameContractSet(_gameContract);
     }

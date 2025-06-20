@@ -9,9 +9,16 @@ module.exports = buildModule("TokenTilesModule", (m) => {
     token20
   ]);
 
+  const setGameContract = m.call(
+    token20,
+    "setGameContract",
+    [tokenTiles]
+  );
+
   return {
     token20,
     token1155,
     tokenTiles,
+    setGameContract
   };
 });
