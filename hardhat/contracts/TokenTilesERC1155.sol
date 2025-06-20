@@ -19,6 +19,7 @@ contract TokenTilesERC1155 is ERC1155, Pausable {
     // Events
     event TilesMinted(address indexed to, uint256[] ids, uint256[] amounts);
     event TileMinted(address indexed to, uint256 id, uint256 amount);
+    event TileBurned(address indexed from, uint256 id, uint256 amount);
     event TilesDistributed(address indexed player, uint256[] tiles);
     
     constructor() ERC1155("https://api.tokentiles.game/metadata/{id}.json") {
@@ -89,6 +90,22 @@ contract TokenTilesERC1155 is ERC1155, Pausable {
         require(id < TOTAL_LETTERS, "Invalid tile ID");
         _mint(to, id, amount, data);
         emit TileMinted(to, id, amount);
+    }
+
+    /**
+     * @dev Burn a single tile from an address
+     * @param from Address to burn from
+     * @param id Tile ID
+     * @param amount Amount to burn
+     */
+    function burnSingle(
+        address from,
+        uint256 id,
+        uint256 amount
+    ) external {
+        require(id < TOTAL_LETTERS, "Invalid tile ID");
+        _burn(from, id, amount);
+        emit TileBurned(from, id, amount);
     }
     
     /**

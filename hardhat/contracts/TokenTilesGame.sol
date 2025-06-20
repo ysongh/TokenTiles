@@ -167,15 +167,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         // Check if player actually owns the old tile
         require(tilesContract.balanceOf(msg.sender, oldTile) >= 1, "Player doesn't own the tile");
         
-        // Transfer old tile back to contract
-        tilesContract.safeTransferFrom(
-            msg.sender,
-            address(this),
-            oldTile,
-            1,
-            ""
-        );
-        
+        tilesContract.burnSingle(msg.sender, oldTile, 1);
         tilesContract.mintSingle(msg.sender, newTile, 1, "");
         
         // Update player's tile array
