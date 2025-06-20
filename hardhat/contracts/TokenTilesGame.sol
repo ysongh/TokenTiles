@@ -164,6 +164,9 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         // Generate a new random tile
         uint256 newTile = _generateSingleRandomTile(msg.sender, currentSession.playerSwapsUsed[msg.sender]);
         
+        // Check if player actually owns the old tile
+        require(tilesContract.balanceOf(msg.sender, oldTile) >= 1, "Player doesn't own the tile");
+        
         // Transfer old tile back to contract
         tilesContract.safeTransferFrom(
             msg.sender,
@@ -173,14 +176,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
             ""
         );
         
-        // Transfer new tile to player
-        tilesContract.safeTransferFrom(
-            address(this),
-            msg.sender,
-            newTile,
-            1,
-            ""
-        );
+        tilesContract.mintSingle(msg.sender, newTile, 1, "");
         
         // Update player's tile array
         playerTiles[tileIndex] = newTile;
