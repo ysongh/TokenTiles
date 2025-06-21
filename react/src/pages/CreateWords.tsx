@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useWriteContract } from "wagmi";
+
+import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json";
 
 interface GameFormData {
   word3: string;
@@ -13,7 +16,6 @@ const CreateWords: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [showSuccess, setShowSuccess] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [gameForm, setGameForm] = useState<GameFormData>({
     word3: '',
@@ -23,6 +25,12 @@ const CreateWords: React.FC = () => {
     entryFee: '0.01',
     timeLimit: 300
   });
+
+    const {
+      writeContract,
+      data: txHash,
+      isPending
+    } = useWriteContract();
 
   const handleFormChange = (field: keyof GameFormData, value: string) => {
     setGameForm((prev) => ({
@@ -50,6 +58,13 @@ const CreateWords: React.FC = () => {
 
     setIsLoading(true);
 
+    writeContract({
+      address: import.meta.env.VITE_TOKENTILESGAME,
+      abi: TokenTilesGame.abi,
+      functionName: "createWordList",
+      args: [word3, word4, word5, word6],
+    })
+
     // Simulate blockchain transaction for game creation
     setTimeout(() => {
       // Reset form
@@ -72,6 +87,11 @@ const CreateWords: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
       <div className="container mx-auto px-4 py-8">
+        {message && (
+          <div className="mb-6 p-4 bg-blue-600/20 border border-blue-500/30 rounded-lg text-center">
+            {message}
+          </div>
+        )}
         <div className="flex items-center justify-center p-4">
             <div className="bg-gradient-to-br from-purple-900 to-indigo-900 rounded-2xl p-8 max-w-2xl w-full">
               <div className="flex justify-between items-center mb-6">
@@ -220,6 +240,13 @@ const CreateWords: React.FC = () => {
                     )}
                   </button>
                 </div>
+
+                {isPending && <div className="my-4">Pending...</div>}
+                {txHash && (
+                  <div className="mb-4">
+                    {txHash}
+                  </div>
+                )}
               </div>
             </div>
           </div>

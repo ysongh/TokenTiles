@@ -24,7 +24,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     uint256 public constant BASE_REWARD = 10 * 10**18; // 10 TILE tokens
     uint256 public constant WORD_LENGTH_MULTIPLIER = 2 * 10**18; // 2 TILE per letter
     uint256 public constant MAX_SWAPS_PER_SESSION = 3;
-    uint256 public constant GAME_CREATION_FEE = 1 * 10**18; // 1 TILE token to create a game
+    uint256 public constant GAME_CREATION_FEE = 0 * 10**18; // 1 TILE token to create a game
 
     // Target word list structure for each game
     struct TargetWordList {
