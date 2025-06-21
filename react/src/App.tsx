@@ -6,6 +6,7 @@ import { ConnectMenu } from "./components/ConnectMenu";
 import Lobby from "./pages/Lobby";
 import TokenTiles from "./pages/TokenTiles";
 import Leaderboard from "./pages/Leaderboard";
+import CreateWords from "./pages/CreateWords";
 
 function App() {
   useEffect(() => {
@@ -16,6 +17,9 @@ function App() {
     <HashRouter>
       <ConnectMenu />
       <Routes>
+        <Route
+          path="/createwords"
+          element={<CreateWords />} />
         <Route
           path="/leaderboard"
           element={<Leaderboard />} />

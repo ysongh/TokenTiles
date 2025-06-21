@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Coins } from 'lucide-react';
-import { useReadContract, useWriteContract } from "wagmi";
+import { useReadContract } from "wagmi";
 
 import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json"
 
@@ -13,37 +13,17 @@ function Lobby() {
     functionName: 'currentSession',
   }) as { data: any  };
 
-  const {
-    writeContract,
-    data: txHash,
-    isPending
-  } = useWriteContract();
-
-  const startNewSession = () => {
-    writeContract({
-      address: import.meta.env.VITE_TOKENTILESGAME,
-      abi: TokenTilesGame.abi,
-      functionName: "startNewSession",
-    })
-  }
-
   console.log(currentSession);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
       <div className="container mx-auto px-4 py-8 w-[600px]">
         <button
-          onClick={startNewSession}
+          onClick={() => navigate("/createwords")}
           className="w-full bg-green-200 hover:bg-green-300 text-gray-800 py-2 px-6 rounded-lg transition-colors mb-3"
         >
           New Game
         </button>
-        {isPending && <div className="my-4">Pending...</div>}
-        {txHash && (
-          <div className="mb-4">
-            {txHash}
-          </div>
-        )}
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
           <h3 className="text-xl font-bold mb-4 flex items-center">
             <Coins className="w-6 h-6 mr-2 text-yellow-400" />
