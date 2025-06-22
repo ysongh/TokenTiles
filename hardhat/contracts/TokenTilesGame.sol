@@ -321,9 +321,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
             playerWordsSubmitted[msg.sender]++;
             session.playerScores[msg.sender] += points;
             
-            // Update leaderboard
-            _updateLeaderboard(msg.sender);
-            
             emit TokensRewarded(msg.sender, points);
         }
         
@@ -416,40 +413,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
             ))
         );
         return randomValue % 26; // 0-25 for A-Z
-    }
-    
-    /**
-     * @dev Update leaderboard with player's new total
-     * @param player Player address
-     */
-    function _updateLeaderboard(address player) private {
-        uint256 playerTotal = playerTotalRewards[player];
-        
-        // If player not on leaderboard, add them
-        if (leaderboardIndex[player] == 0 && leaderboard.length == 0 || 
-            (leaderboard.length > 0 && leaderboard[leaderboardIndex[player]] != player)) {
-            leaderboard.push(player);
-            leaderboardIndex[player] = leaderboard.length - 1;
-        }
-        
-        // Simple bubble sort for top positions (optimize for production)
-        uint256 currentIndex = leaderboardIndex[player];
-        
-        while (currentIndex > 0 && 
-               playerTotalRewards[leaderboard[currentIndex - 1]] < playerTotal) {
-            // Swap positions
-            address temp = leaderboard[currentIndex - 1];
-            leaderboard[currentIndex - 1] = leaderboard[currentIndex];
-            leaderboard[currentIndex] = temp;
-            
-            // Update indices
-            leaderboardIndex[temp] = currentIndex;
-            leaderboardIndex[player] = currentIndex - 1;
-            
-            currentIndex--;
-        }
-        
-        emit LeaderboardUpdated(player, playerTotal);
     }
     
     /**
@@ -566,23 +529,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         GameSession storage session = gameSessions[sessionId];
         require(session.players[player], "Player not in session");
         return session.playerScores[player];
-    }
-
-    /**
-     * @dev Get leaderboard (top 10)
-     * @return Array of top player addresses and their rewards
-     */
-    function getLeaderboard() external view returns (address[] memory, uint256[] memory) {
-        uint256 length = leaderboard.length > 10 ? 10 : leaderboard.length;
-        address[] memory topPlayers = new address[](length);
-        uint256[] memory topRewards = new uint256[](length);
-        
-        for (uint256 i = 0; i < length; i++) {
-            topPlayers[i] = leaderboard[i];
-            topRewards[i] = playerTotalRewards[leaderboard[i]];
-        }
-        
-        return (topPlayers, topRewards);
     }
     
     /**
