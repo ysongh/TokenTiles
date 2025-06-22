@@ -104,7 +104,7 @@ const TokenTiles: React.FC = () => {
     args: [address]
   }) as { data: any  };
 
-  const { data: gameData } = useReadContract({
+  const { data: gameData = []} = useReadContract({
     address: import.meta.env.VITE_TOKENTILESGAME,
     abi: TokenTilesGame.abi,
     functionName: 'getSession',
@@ -115,14 +115,14 @@ const TokenTiles: React.FC = () => {
     address: import.meta.env.VITE_TOKENTILESGAME,
     abi: TokenTilesGame.abi,
     functionName: 'getPlayerTiles',
-    args: [address]
+    args: [id, address]
   }) as { data: any  };
 
   const { data: changesRemaining = 0 } = useReadContract({
     address: import.meta.env.VITE_TOKENTILESGAME,
     abi: TokenTilesGame.abi,
     functionName: 'getPlayerSwapsRemaining',
-    args: [address]
+    args: [id, address]
   }) as { data: any  };
 
   const {
@@ -144,6 +144,7 @@ const TokenTiles: React.FC = () => {
       address: import.meta.env.VITE_TOKENTILESGAME,
       abi: TokenTilesGame.abi,
       functionName: "joinGame",
+      args: [id]
     })
   }
 
@@ -219,7 +220,7 @@ const TokenTiles: React.FC = () => {
               {currentGame ? (
                 <div>
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-bold">Current Game #{gameData[0]?.toString()}</h3>
+                    <h3 className="text-xl font-bold">Current Game #{gameData[0] && gameData[0]?.toString()}</h3>
                     <div className="flex items-center text-orange-400">
                       <Clock className="w-5 h-5 mr-1" />
                       <span className="font-mono">{formatTime(timeLeft)}</span>
