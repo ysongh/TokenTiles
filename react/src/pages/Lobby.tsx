@@ -4,16 +4,27 @@ import { useReadContract } from "wagmi";
 
 import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json"
 
+interface Game {
+  sessionId: number;
+  gameName: string;
+  playerCount: number;
+  startTime: number;
+  endTime: number;
+  creator: string;
+  wordListId: number;
+  active: boolean;
+}
+
 function Lobby() {
   const navigate = useNavigate();
 
-  const { data: currentSession = [] } = useReadContract({
+  const { data: games = [] } = useReadContract({
     address: import.meta.env.VITE_TOKENTILESGAME,
     abi: TokenTilesGame.abi,
-    functionName: 'currentSession',
-  }) as { data: any  };
+    functionName: 'getAllGames',
+  }) as { data: Game[] };
 
-  console.log(currentSession);
+  console.log(games);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
@@ -31,29 +42,31 @@ function Lobby() {
           </h3>
           
           <div className="space-y-3">
-            <div className="bg-white/10 rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer">
-              <div className="flex justify-between items-start mb-2">
-                <div className="font-mono text-lg font-bold tracking-wide">
-                  {currentSession[0]?.toString()}
+            {games.map(game => (
+              <div key={game?.sessionId?.toString()}className="bg-white/10 rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer">
+                <div className="flex justify-between items-start mb-2">
+                  <div className="font-mono text-lg font-bold tracking-wide">
+                    {game?.gameName}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-yellow-400 font-semibold">{game.active ? "Started" : "Not Started"}</div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-yellow-400 font-semibold">{currentSession[1] ? "Started" : "Not Started"}</div>
+                
+                <div className="flex justify-between text-sm text-gray-300">
+                  <span>{game?.playerCount?.toString()} Players</span>
+                  <span>{game?.startTime?.toString()}</span>
+                  <span>{game?.endTime?.toString()}</span>
                 </div>
+                
+                <button
+                  className="w-full mt-2 bg-blue-600 hover:bg-blue-700 py-2 rounded text-sm font-semibold transition-colors"
+                  onClick={() => navigate("/test")}
+                >
+                  Join Game
+                </button>
               </div>
-              
-              <div className="flex justify-between text-sm text-gray-300">
-                <span>{currentSession[2]?.toString()} Players</span>
-                <span>{currentSession[3]?.toString()}</span>
-                <span>{currentSession[4]?.toString()}</span>
-              </div>
-              
-              <button
-                className="w-full mt-2 bg-blue-600 hover:bg-blue-700 py-2 rounded text-sm font-semibold transition-colors"
-                onClick={() => navigate("/test")}
-              >
-                Join Game
-              </button>
-            </div>
+            ))}
           </div>
         </div>
 
