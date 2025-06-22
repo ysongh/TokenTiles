@@ -61,7 +61,7 @@ function Lobby() {
                 
                 <button
                   className="w-full mt-2 bg-blue-600 hover:bg-blue-700 py-2 rounded text-sm font-semibold transition-colors"
-                  onClick={() => navigate("/test")}
+                  onClick={() => navigate("/game/" + game?.sessionId?.toString())}
                 >
                   Join Game
                 </button>

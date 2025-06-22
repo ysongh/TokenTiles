@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Play, CheckCircle, Clock, RotateCcw } from 'lucide-react';
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
@@ -81,6 +82,7 @@ const mockGames: Game[] = [
 ];
 
 const TokenTiles: React.FC = () => {
+  const { id } = useParams();
   const { address } = useAccount();
 
   const [currentGame, setCurrentGame] = useState<Game | null>(mockGames[0]);
@@ -100,6 +102,13 @@ const TokenTiles: React.FC = () => {
     abi: TileTokenERC20.abi,
     functionName: 'balanceOf',
     args: [address]
+  }) as { data: any  };
+
+  const { data: gameData } = useReadContract({
+    address: import.meta.env.VITE_TOKENTILESGAME,
+    abi: TokenTilesGame.abi,
+    functionName: 'getSession',
+    args: [id]
   }) as { data: any  };
 
   const { data: playerWords = [] } = useReadContract({
@@ -180,7 +189,7 @@ const TokenTiles: React.FC = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  console.log(playerWords, address);
+  console.log(gameData);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
@@ -210,7 +219,7 @@ const TokenTiles: React.FC = () => {
               {currentGame ? (
                 <div>
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-bold">Current Game</h3>
+                    <h3 className="text-xl font-bold">Current Game #{gameData[0]?.toString()}</h3>
                     <div className="flex items-center text-orange-400">
                       <Clock className="w-5 h-5 mr-1" />
                       <span className="font-mono">{formatTime(timeLeft)}</span>

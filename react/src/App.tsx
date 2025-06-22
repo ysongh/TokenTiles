@@ -24,7 +24,7 @@ function App() {
           path="/leaderboard"
           element={<Leaderboard />} />
         <Route
-          path="/test"
+          path="/game/:id"
           element={<TokenTiles />} />
         <Route
           path="/"
