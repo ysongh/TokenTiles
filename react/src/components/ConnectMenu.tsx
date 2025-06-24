@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Shuffle, Wallet } from "lucide-react";
 import {
   useAccount,
@@ -13,6 +14,7 @@ export function ConnectMenu() {
   const { connect, connectors } = useConnect();
   const chains = useChains();
   const chainId = useChainId();
+  const navigate = useNavigate();
 
   const currentChain = chains.find(chain => chain.id === chainId);
 
@@ -23,7 +25,10 @@ export function ConnectMenu() {
           <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-3 rounded-xl">
             <Shuffle className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+          <h1
+            className="text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent cursor-pointer"
+            onClick={() => navigate("/")}
+          >
             TokenTiles
           </h1>
         </div>
