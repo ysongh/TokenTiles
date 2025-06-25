@@ -213,15 +213,6 @@ const CreateWords: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-yellow-600/20 border border-yellow-500/30 rounded-lg p-4">
-                  <h4 className="font-semibold mb-2">Game Details:</h4>
-                  <div className="space-y-1 text-sm">
-                    <p>• Prize Pool: {(parseFloat(gameForm.entryFee || '0') * 5).toFixed(3)} ETH per game</p>
-                    <p>• 4 separate games will be created (one for each difficulty)</p>
-                    <p>• Total potential earnings: {(parseFloat(gameForm.entryFee || '0') * 20).toFixed(3)} ETH</p>
-                  </div>
-                </div>
-
                 <div className="flex space-x-4">
                   <button
                     onClick={() => setShowCreateForm(false)}
