@@ -234,12 +234,22 @@ const TokenTiles: React.FC = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <h2>Target Words:</h2>
-                    <p>{wordList[0]}</p>
-                    <p>{wordList[1]}</p>
-                    <p>{wordList[2]}</p>
-                    <p>{wordList[3]}</p>
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold text-gray-100 mb-2">🎯 Target Words</h2>
+                    <ul className="grid grid-cols-2 gap-2">
+                      <li className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm">
+                        {wordList[0]}
+                      </li>
+                      <li className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm">
+                        {wordList[1]}
+                      </li>
+                      <li className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm">
+                        {wordList[2]}
+                      </li>
+                      <li className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm">
+                        {wordList[3]}
+                      </li>
+                    </ul>
                   </div>
                   
                   <div className="text-center mb-6">
