@@ -162,7 +162,7 @@ const TokenTiles: React.FC = () => {
       address: import.meta.env.VITE_TOKENTILESGAME,
       abi: TokenTilesGame.abi,
       functionName: "submitWord",
-      args: [userInput],
+      args: [id, userInput],
     })
   };
 
@@ -177,7 +177,7 @@ const TokenTiles: React.FC = () => {
       address: import.meta.env.VITE_TOKENTILESGAME,
       abi: TokenTilesGame.abi,
       functionName: "swapTile",
-      args: [index]
+      args: [id, index]
     })
   };
 
