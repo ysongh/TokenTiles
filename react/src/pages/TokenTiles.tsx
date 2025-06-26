@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Play, CheckCircle, Clock, RotateCcw } from 'lucide-react';
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { useAccount, useBlockNumber, useReadContract, useWriteContract } from "wagmi";
 
 import TileTokenERC20 from "../artifacts/contracts/TileTokenERC20.sol/TileTokenERC20.json";
 import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json";
@@ -84,6 +84,7 @@ const mockGames: Game[] = [
 const TokenTiles: React.FC = () => {
   const { id } = useParams();
   const { address } = useAccount();
+  const { data: blockNumber } = useBlockNumber({ watch: true })
 
   const [currentGame, setCurrentGame] = useState<Game | null>(mockGames[0]);
   const [userInput, setUserInput] = useState('');
@@ -111,26 +112,26 @@ const TokenTiles: React.FC = () => {
     args: [id]
   }) as { data: any  };
 
-  const { data: wordList = []} = useReadContract({
+  const { data: wordList = [] } = useReadContract({
     address: import.meta.env.VITE_TOKENTILESGAME,
     abi: TokenTilesGame.abi,
     functionName: 'getWordList',
-    args: [id]
+    args: [id],
   }) as { data: any  };
 
-  const { data: playerWords = [] } = useReadContract({
+  const { data: playerWords = [], refetch: wordListRefetch } = useReadContract({
     address: import.meta.env.VITE_TOKENTILESGAME,
     abi: TokenTilesGame.abi,
     functionName: 'getPlayerTiles',
     args: [id, address]
-  }) as { data: any  };
+  }) as { data: any, refetch: () => void };
 
-  const { data: changesRemaining = 0 } = useReadContract({
+  const { data: changesRemaining = 0, refetch: changesRemainingRefetch } = useReadContract({
     address: import.meta.env.VITE_TOKENTILESGAME,
     abi: TokenTilesGame.abi,
     functionName: 'getPlayerSwapsRemaining',
     args: [id, address]
-  }) as { data: any  };
+  }) as { data: any, refetch: () => void  };
 
   const {
     writeContract,
@@ -145,6 +146,11 @@ const TokenTiles: React.FC = () => {
       setPlayerLetters(letters);
     }
   }, [playerWords]);
+
+  useEffect(() => {
+    wordListRefetch();
+    changesRemainingRefetch();
+  }, [blockNumber])
 
   const joinGame = () => {
     writeContract({
