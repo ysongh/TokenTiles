@@ -3,6 +3,7 @@ import { Coins } from 'lucide-react';
 import { useReadContract } from "wagmi";
 
 import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json"
+import { formatDate } from '../utils/format';
 
 interface Game {
   sessionId: number;
@@ -55,7 +56,7 @@ function Lobby() {
                 
                 <div className="flex justify-between text-sm text-gray-300">
                   <span>{game?.playerCount?.toString()} Players</span>
-                  <span>{game?.startTime?.toString()}</span>
+                  <span>{formatDate(BigInt(game?.startTime) || BigInt(0))}</span>
                   <span>{game?.endTime?.toString()}</span>
                 </div>
                 
