@@ -90,7 +90,6 @@ const TokenTiles: React.FC = () => {
   const [userInput, setUserInput] = useState('');
   const [timeLeft, setTimeLeft] = useState(0);
 
-  const [gameHistory, setGameHistory] = useState<Game[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
@@ -185,16 +184,6 @@ const TokenTiles: React.FC = () => {
       functionName: "swapTile",
       args: [id, index]
     })
-  };
-
-  const resetLetters = () => {
-    if (playerWords && playerWords.length > 0) {
-      const originalLetters = playerWords.map((p: BigInt) => numberToLetter[Number(p)]);
-      setPlayerLetters(originalLetters);
-      setUserInput('');
-      setMessage('Letters reset to original scrambled word!');
-      setTimeout(() => setMessage(''), 2000);
-    }
   };
 
   const formatTime = (seconds: number) => {
@@ -294,15 +283,6 @@ const TokenTiles: React.FC = () => {
                           : "No more changes available - use reset to start over"
                         }
                       </div>
-
-                      {/* Reset Button */}
-                      <button
-                        onClick={resetLetters}
-                        className="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors flex items-center gap-1 mx-auto"
-                      >
-                        <RotateCcw className="w-3 h-3" />
-                        Reset Letters & Changes
-                      </button>
                     </div>
                     
                     <div className="flex items-center justify-center space-x-4 text-sm text-gray-300 mb-4">
