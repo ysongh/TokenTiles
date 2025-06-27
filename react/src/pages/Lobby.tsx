@@ -42,26 +42,56 @@ function Lobby() {
             Available Games
           </h3>
           
-          <div className="space-y-3">
-            {games.map(game => (
-              <div key={game?.sessionId?.toString()}className="bg-white/10 rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="font-mono text-lg font-bold tracking-wide">
-                    {game?.gameName}
+          <div className="space-y-4">
+            {games.map((game) => (
+              <div
+                key={game?.sessionId?.toString()}
+                className="bg-gradient-to-br from-white/10 via-white/5 to-white/10 border border-white/10 rounded-xl p-5 hover:scale-[1.02] hover:bg-white/10 transition-all duration-200 cursor-pointer shadow-lg"
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-block bg-indigo-500/40 rounded-full px-3 py-1 text-xs uppercase tracking-wider font-semibold text-indigo-100">
+                      {game?.gameName}
+                    </span>
+                    <span
+                      className={`text-xs font-bold ${
+                        game.active
+                          ? "text-green-400"
+                          : "text-yellow-400"
+                      }`}
+                    >
+                      {game.active ? "Started" : "Not Started"}
+                    </span>
                   </div>
-                  <div className="text-right">
-                    <div className="text-yellow-400 font-semibold">{game.active ? "Started" : "Not Started"}</div>
-                  </div>
+                  <span className="text-sm text-gray-300 font-mono">
+                    {formatDate(BigInt(game?.startTime) || BigInt(0))}
+                  </span>
                 </div>
-                
-                <div className="flex justify-between text-sm text-gray-300">
-                  <span>{game?.playerCount?.toString()} Players</span>
-                  <span>{formatDate(BigInt(game?.startTime) || BigInt(0))}</span>
-                  <span>{game?.endTime?.toString()}</span>
+
+                <div className="flex justify-between text-sm text-gray-300 mb-4">
+                  <span className="flex items-center gap-1">
+                    <svg
+                      className="w-4 h-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M17 20h5V4H2v16h5m10-12l-5 5m0 0l-5-5m5 5V4"
+                      />
+                    </svg>
+                    {game?.playerCount?.toString()} Players
+                  </span>
+                  <span className="font-mono text-xs text-gray-400">
+                    Ends: {game?.endTime?.toString()}
+                  </span>
                 </div>
-                
+
                 <button
-                  className="w-full mt-2 bg-blue-600 hover:bg-blue-700 py-2 rounded text-sm font-semibold transition-colors"
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 py-2 rounded-lg text-sm font-semibold transition-all text-white shadow-md hover:shadow-lg"
                   onClick={() => navigate("/game/" + game?.sessionId?.toString())}
                 >
                   Join Game
