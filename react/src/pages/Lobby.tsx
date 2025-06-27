@@ -32,9 +32,9 @@ function Lobby() {
       <div className="container mx-auto px-4 py-8 w-[600px]">
         <button
           onClick={() => navigate("/createwords")}
-          className="w-full bg-green-200 hover:bg-green-300 text-gray-800 py-2 px-6 rounded-lg transition-colors mb-3"
+          className="w-full bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-gray-900 font-semibold py-3 px-6 rounded-xl shadow hover:shadow-lg transition-all mb-4"
         >
-          New Game
+          ➕ New Game
         </button>
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
           <h3 className="text-xl font-bold mb-4 flex items-center">
@@ -103,9 +103,9 @@ function Lobby() {
 
         <button
           onClick={() => navigate("/leaderboard")}
-          className="w-full mt-3 bg-green-200 hover:bg-green-300 text-gray-800 py-2 px-6 rounded-lg transition-colors mb-3"
+          className="w-full bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 text-gray-900 font-semibold py-3 px-6 rounded-xl shadow hover:shadow-lg transition-all mt-4"
         >
-          Leaderboard
+          🏆 Leaderboard
         </button>
       </div>
     </div>
