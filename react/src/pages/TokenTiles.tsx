@@ -247,7 +247,7 @@ const TokenTiles: React.FC = () => {
                     </ul>
                   </div>
                   
-                  <div className="text-center mb-6">
+                  {playerWords.length > 0 && <div className="text-center mb-6">
                     <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-6 mb-4">
                       <h4 className="text-sm text-gray-300 mb-2">Unscramble this word:</h4>
                       
@@ -291,8 +291,9 @@ const TokenTiles: React.FC = () => {
                       <span>{currentGame.submissions} players</span>
                     </div>
                   </div>
+                  }
 
-                  <div className="space-y-4">
+                  {playerWords.length > 0 && <div className="space-y-4">
                     <input
                       type="text"
                       value={userInput}
@@ -323,7 +324,7 @@ const TokenTiles: React.FC = () => {
                         </>
                       )}
                     </button>
-                  </div>
+                  </div>}
                 </div>
               ) : (
                 <div className="text-center py-8">
