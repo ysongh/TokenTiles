@@ -8,8 +8,6 @@ interface GameFormData {
   word4: string;
   word5: string;
   word6: string;
-  entryFee: string;
-  timeLimit: number;
 }
 
 const CreateWords: React.FC = () => {
@@ -21,9 +19,7 @@ const CreateWords: React.FC = () => {
     word3: '',
     word4: '',
     word5: '',
-    word6: '',
-    entryFee: '0.01',
-    timeLimit: 300
+    word6: ''
   });
 
     const {
@@ -41,7 +37,7 @@ const CreateWords: React.FC = () => {
     
 
   const createGame = () => {
-    const { word3, word4, word5, word6, entryFee, timeLimit } = gameForm;
+    const { word3, word4, word5, word6 } = gameForm;
     
     // Validate form
     if (!word3 || !word4 || !word5 || !word6) {
@@ -72,9 +68,7 @@ const CreateWords: React.FC = () => {
         word3: '',
         word4: '',
         word5: '',
-        word6: '',
-        entryFee: '0.01',
-        timeLimit: 300
+        word6: ''
       });
       
       setShowCreateForm(false);
@@ -181,35 +175,6 @@ const CreateWords: React.FC = () => {
                     {gameForm.word6 && gameForm.word6.length !== 6 && (
                       <p className="text-red-400 text-xs mt-1">Must be exactly 6 letters</p>
                     )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Entry Fee (ETH)</label>
-                    <input
-                      type="number"
-                      step="0.001"
-                      min="0.001"
-                      value={gameForm.entryFee}
-                      onChange={(e) => handleFormChange('entryFee', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/20 rounded-lg border border-white/30 text-center font-mono placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Time Limit (seconds)</label>
-                    <select
-                      value={gameForm.timeLimit}
-                      onChange={(e) => handleFormChange('timeLimit', parseInt(e.target.value))}
-                      className="w-full px-4 py-3 bg-white/20 rounded-lg border border-white/30 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value={120}>2 minutes</option>
-                      <option value={180}>3 minutes</option>
-                      <option value={240}>4 minutes</option>
-                      <option value={300}>5 minutes</option>
-                      <option value={600}>10 minutes</option>
-                    </select>
                   </div>
                 </div>
 
