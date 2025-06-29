@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Shuffle, Wallet } from "lucide-react";
+import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import {
   useAccount,
   useConnect,
@@ -46,13 +47,16 @@ export function ConnectMenu() {
             </button>
           </div>
         ) : (
-          <button
-            onClick={() => connect({ connector: connectors[0] })}
-            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 transition-all transform hover:scale-105 disabled:opacity-50"
-          >
-            <Wallet className="w-5 h-5" />
-            <span>Connect Wallet</span>
-          </button>
+          <div className="flex items-center">
+            <button
+              onClick={() => connect({ connector: connectors[0] })}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 transition-all transform hover:scale-105 disabled:opacity-50 mr-3"
+            >
+              <Wallet className="w-5 h-5" />
+              <span>Connect Wallet</span>
+            </button>
+            <DynamicWidget />
+          </div>
         )}
       </div>
     </div>

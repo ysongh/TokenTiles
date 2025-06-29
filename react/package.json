@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dynamic-labs/ethereum": "^4.20.9",
+    "@dynamic-labs/sdk-react-core": "^4.20.9",
+    "@dynamic-labs/wagmi-connector": "^4.20.9",
     "@farcaster/frame-sdk": "latest",
     "@farcaster/frame-wagmi-connector": "latest",
     "@tailwindcss/vite": "^4.1.8",

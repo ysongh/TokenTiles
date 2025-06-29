@@ -5,6 +5,7 @@ import { base, mainnet, hardhat } from "wagmi/chains";
 export const config = createConfig({
   chains: [base, mainnet, hardhat],
   connectors: [farcasterFrame()],
+  multiInjectedProviderDiscovery: false,
   transports: {
     [base.id]: http(),
     [mainnet.id]: http(),
