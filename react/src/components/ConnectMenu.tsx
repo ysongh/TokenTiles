@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Shuffle, Wallet } from "lucide-react";
 import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
@@ -7,6 +8,7 @@ import {
   useChains,
   useChainId
 } from "wagmi";
+import sdk from "@farcaster/frame-sdk";
 
 import { formatAddress } from '../utils/format';
 
@@ -19,6 +21,17 @@ export function ConnectMenu() {
   const navigate = useNavigate();
 
   const currentChain = chains.find(chain => chain.id === chainId);
+
+  const [isMiniApp, setIsMiniApp] = useState<Boolean>(false);
+
+  useEffect(() => {
+    const loadSDK = async () => {
+      // @ts-ignore
+      const newIsMiniApp = await sdk.isInMiniApp();
+      setIsMiniApp(newIsMiniApp);
+    }
+    loadSDK();
+  }, [])
 
   return (
     <div className="bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
@@ -51,7 +64,7 @@ export function ConnectMenu() {
         ) : (
           <div className="flex items-center">
             <button
-              onClick={() => connect({ connector: connectors[0] })}
+              onClick={() => connect({ connector: connectors[isMiniApp ? 0 : 1] })}
               className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 transition-all transform hover:scale-105 disabled:opacity-50 mr-3"
             >
               <Wallet className="w-5 h-5" />
