@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useWriteContract } from "wagmi";
 
 import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json";
@@ -11,10 +12,10 @@ interface GameFormData {
 }
 
 const CreateWords: React.FC = () => {
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [showCreateForm, setShowCreateForm] = useState(false);
   const [gameForm, setGameForm] = useState<GameFormData>({
     word3: '',
     word4: '',
@@ -71,7 +72,6 @@ const CreateWords: React.FC = () => {
         word6: ''
       });
       
-      setShowCreateForm(false);
       setIsLoading(false);
       setMessage(`Successfully created 4 games with different difficulty levels!`);
       setTimeout(() => setMessage(''), 4000);
@@ -180,7 +180,7 @@ const CreateWords: React.FC = () => {
 
                 <div className="flex space-x-4">
                   <button
-                    onClick={() => setShowCreateForm(false)}
+                   onClick={() => navigate("/")}
                     className="flex-1 bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors"
                   >
                     Cancel
