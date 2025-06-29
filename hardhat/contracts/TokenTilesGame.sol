@@ -23,7 +23,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     uint256 public constant TILES_PER_PLAYER = 7;
     uint256 public constant BASE_REWARD = 10 * 10**18; // 10 TILE tokens
     uint256 public constant WORD_LENGTH_MULTIPLIER = 2 * 10**18; // 2 TILE per letter
-    uint256 public constant MAX_SWAPS_PER_SESSION = 3;
+    uint256 public constant MAX_SWAPS_PER_SESSION = 100;
     uint256 public constant GAME_CREATION_FEE = 0 * 10**18; // 0 TILE token to create a game
 
     // Target word list structure for each game
@@ -51,6 +51,14 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         uint256 startTime;
         uint256 endTime;
         address creator;     // Session creator
+        bool word3LetterClaimed;
+        bool word4LetterClaimed;
+        bool word5LetterClaimed;
+        bool word6LetterClaimed;
+        address word3LetterClaimedBy;
+        address word4LetterClaimedBy;
+        address word5LetterClaimedBy;
+        address word6LetterClaimedBy;
     }
 
     // Game info for list view (without mappings)
@@ -99,6 +107,20 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     event TokensRewarded(address indexed player, uint256 amount);
     event LeaderboardUpdated(address indexed player, uint256 newTotal);
     event TileSwapped(uint256 indexed sessionId, address indexed player, uint256 oldTile, uint256 newTile, uint256 swapsRemaining);
+    event SessionCompleted(uint256 indexed sessionId, uint256 timestamp);
+    event TargetWordClaimed(
+        uint256 indexed sessionId, 
+        address indexed player, 
+        string word, 
+        string wordType, 
+        uint256 points
+    );
+    event WordAlreadyClaimed(
+        uint256 indexed sessionId, 
+        address indexed player, 
+        string word, 
+        address claimedBy
+    );
 
     constructor(
         address _tilesContract,
@@ -292,48 +314,84 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         require(session.active, "Session not active");
         require(session.players[msg.sender], "Player not in session");
 
+        // Convert word to uppercase for consistent comparison
+        string memory upperWord = _toUpperCase(word);
+        
         TargetWordList storage wordList = targetWordLists[session.wordListId];
         
-        // Check if the submitted word matches any target word
+        // Check if the submitted word matches any target word and if it's still available
         bool isTargetWord = false;
+        bool isAvailable = false;
         uint256 points = 0;
+        string memory targetWordType = "";
         
-        if (_compareStrings(word, wordList.word3Letter)) {
+        if (_compareStrings(upperWord, _toUpperCase(wordList.word3Letter))) {
             isTargetWord = true;
+            isAvailable = !session.word3LetterClaimed;
             points = BASE_REWARD + (3 * WORD_LENGTH_MULTIPLIER);
-        } else if (_compareStrings(word, wordList.word4Letter)) {
+            targetWordType = "3-letter";
+        } else if (_compareStrings(upperWord, _toUpperCase(wordList.word4Letter))) {
             isTargetWord = true;
+            isAvailable = !session.word4LetterClaimed;
             points = BASE_REWARD + (4 * WORD_LENGTH_MULTIPLIER);
-        } else if (_compareStrings(word, wordList.word5Letter)) {
+            targetWordType = "4-letter";
+        } else if (_compareStrings(upperWord, _toUpperCase(wordList.word5Letter))) {
             isTargetWord = true;
+            isAvailable = !session.word5LetterClaimed;
             points = BASE_REWARD + (5 * WORD_LENGTH_MULTIPLIER);
-        } else if (_compareStrings(word, wordList.word6Letter)) {
+            targetWordType = "5-letter";
+        } else if (_compareStrings(upperWord, _toUpperCase(wordList.word6Letter))) {
             isTargetWord = true;
+            isAvailable = !session.word6LetterClaimed;
             points = BASE_REWARD + (6 * WORD_LENGTH_MULTIPLIER);
+            targetWordType = "6-letter";
         }
         
-        // Only proceed if it's a target word AND player can form it with their tiles
+        // Check if it's a target word, still available, and player can form it
         bool isValid = false;
-        if (isTargetWord) {
-            isValid = _canPlayerFormWord(sessionId, msg.sender, word);
+        if (isTargetWord && isAvailable) {
+            isValid = _canPlayerFormWord(sessionId, msg.sender, upperWord);
+            
+            if (isValid) {
+                // Mark the specific target word as claimed
+                if (_compareStrings(upperWord, _toUpperCase(wordList.word3Letter))) {
+                    session.word3LetterClaimed = true;
+                    session.word3LetterClaimedBy = msg.sender;
+                } else if (_compareStrings(upperWord, _toUpperCase(wordList.word4Letter))) {
+                    session.word4LetterClaimed = true;
+                    session.word4LetterClaimedBy = msg.sender;
+                } else if (_compareStrings(upperWord, _toUpperCase(wordList.word5Letter))) {
+                    session.word5LetterClaimed = true;
+                    session.word5LetterClaimedBy = msg.sender;
+                } else if (_compareStrings(upperWord, _toUpperCase(wordList.word6Letter))) {
+                    session.word6LetterClaimed = true;
+                    session.word6LetterClaimedBy = msg.sender;
+                }
+                
+                // Mint reward tokens
+                rewardToken.mintReward(msg.sender, points);
+                
+                // Update player statistics
+                playerTotalRewards[msg.sender] += points;
+                playerWordsSubmitted[msg.sender]++;
+                session.playerScores[msg.sender] += points;
+                
+                emit TokensRewarded(msg.sender, points);
+                emit TargetWordClaimed(sessionId, msg.sender, upperWord, targetWordType, points);
+            }
         }
         
-        if (isValid) {
-            // Mint reward tokens
-            rewardToken.mintReward(msg.sender, points);
-            
-            // Update player statistics
-            playerTotalRewards[msg.sender] += points;
-            playerWordsSubmitted[msg.sender]++;
-            session.playerScores[msg.sender] += points;
-            
-            emit TokensRewarded(msg.sender, points);
+        // Store submitted word (for history tracking)
+        session.submittedWords[msg.sender].push(upperWord);
+        
+        // Emit with additional info about availability
+        emit WordSubmitted(sessionId, msg.sender, upperWord, isValid, points);
+        
+        // If it was a target word but already claimed, emit special event
+        if (isTargetWord && !isAvailable) {
+            address claimedBy = _getWordClaimedBy(sessionId, upperWord, wordList);
+            emit WordAlreadyClaimed(sessionId, msg.sender, upperWord, claimedBy);
         }
-        
-        // Store submitted word
-        session.submittedWords[msg.sender].push(word);
-        
-        emit WordSubmitted(sessionId, msg.sender, word, isValid, points);
     }
 
     /**
@@ -479,6 +537,23 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
             ))
         );
         return randomValue % 26; // 0-25 for A-Z
+    }
+
+    // Helper function to get who claimed a specific word
+    function _getWordClaimedBy(uint256 sessionId, string memory word, TargetWordList storage wordList) private view returns (address) {
+        GameSession storage session = gameSessions[sessionId];
+        
+        if (_compareStrings(word, _toUpperCase(wordList.word3Letter))) {
+            return session.word3LetterClaimedBy;
+        } else if (_compareStrings(word, _toUpperCase(wordList.word4Letter))) {
+            return session.word4LetterClaimedBy;
+        } else if (_compareStrings(word, _toUpperCase(wordList.word5Letter))) {
+            return session.word5LetterClaimedBy;
+        } else if (_compareStrings(word, _toUpperCase(wordList.word6Letter))) {
+            return session.word6LetterClaimedBy;
+        }
+        
+        return address(0);
     }
     
     /**
