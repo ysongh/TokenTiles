@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Shuffle, Wallet } from "lucide-react";
-import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
+import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import {
   useAccount,
   useConnect,
@@ -12,6 +12,7 @@ import { formatAddress } from '../utils/format';
 
 export function ConnectMenu() {
   const { isConnected, address } = useAccount();
+  const { handleLogOut } = useDynamicContext();
   const { connect, connectors } = useConnect();
   const chains = useChains();
   const chainId = useChainId();
@@ -41,6 +42,7 @@ export function ConnectMenu() {
               <p className="font-mono text-sm">{formatAddress(address || "")}</p>
             </div>
             <button
+              onClick={() => handleLogOut()}
               className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
             >
               Disconnect
