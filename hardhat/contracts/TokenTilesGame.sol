@@ -281,10 +281,10 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     }
     
     /**
-     * @dev Submit a word for validation and rewards in a specific session
-     * @param sessionId ID of the session
-     * @param word The word to submit
-     */
+    * @dev Submit a word for validation and rewards in a specific session
+    * @param sessionId ID of the session
+    * @param word The word to submit
+    */
     function submitWord(uint256 sessionId, string memory word) external whenNotPaused nonReentrant {
         require(sessionId > 0 && sessionId <= _sessionIds, "Invalid session ID");
         
@@ -295,21 +295,27 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         TargetWordList storage wordList = targetWordLists[session.wordListId];
         
         // Check if the submitted word matches any target word
-        bool isValid = false;
+        bool isTargetWord = false;
         uint256 points = 0;
         
         if (_compareStrings(word, wordList.word3Letter)) {
-            isValid = true;
+            isTargetWord = true;
             points = BASE_REWARD + (3 * WORD_LENGTH_MULTIPLIER);
         } else if (_compareStrings(word, wordList.word4Letter)) {
-            isValid = true;
+            isTargetWord = true;
             points = BASE_REWARD + (4 * WORD_LENGTH_MULTIPLIER);
         } else if (_compareStrings(word, wordList.word5Letter)) {
-            isValid = true;
+            isTargetWord = true;
             points = BASE_REWARD + (5 * WORD_LENGTH_MULTIPLIER);
         } else if (_compareStrings(word, wordList.word6Letter)) {
-            isValid = true;
+            isTargetWord = true;
             points = BASE_REWARD + (6 * WORD_LENGTH_MULTIPLIER);
+        }
+        
+        // Only proceed if it's a target word AND player can form it with their tiles
+        bool isValid = false;
+        if (isTargetWord) {
+            isValid = _canPlayerFormWord(sessionId, msg.sender, word);
         }
         
         if (isValid) {
@@ -328,6 +334,66 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         session.submittedWords[msg.sender].push(word);
         
         emit WordSubmitted(sessionId, msg.sender, word, isValid, points);
+    }
+
+    /**
+    * @dev Check if a player can form a word using their tiles
+    * @param sessionId ID of the session
+    * @param player Player address
+    * @param word Word to check
+    * @return True if player can form the word
+    */
+    function _canPlayerFormWord(uint256 sessionId, address player, string memory word) private view returns (bool) {
+        GameSession storage session = gameSessions[sessionId];
+        uint256[] memory playerTiles = session.playerTiles[player];
+        
+        // Convert word to uppercase bytes for processing
+        bytes memory wordBytes = bytes(_toUpperCase(word));
+        
+        // Count required letters
+        uint256[26] memory requiredLetters; // A=0, B=1, ..., Z=25
+        for (uint256 i = 0; i < wordBytes.length; i++) {
+            uint8 letterIndex = uint8(wordBytes[i]) - 65; // Convert ASCII to 0-25 (A=65 in ASCII)
+            require(letterIndex < 26, "Invalid character in word");
+            requiredLetters[letterIndex]++;
+        }
+        
+        // Count available letters from player's tiles
+        uint256[26] memory availableLetters;
+        for (uint256 i = 0; i < playerTiles.length; i++) {
+            require(playerTiles[i] < 26, "Invalid tile ID");
+            availableLetters[playerTiles[i]]++;
+        }
+        
+        // Check if player has enough of each required letter
+        for (uint256 i = 0; i < 26; i++) {
+            if (requiredLetters[i] > availableLetters[i]) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+    * @dev Convert string to uppercase
+    * @param str Input string
+    * @return Uppercase string
+    */
+    function _toUpperCase(string memory str) private pure returns (string memory) {
+        bytes memory bStr = bytes(str);
+        bytes memory bUpper = new bytes(bStr.length);
+        
+        for (uint256 i = 0; i < bStr.length; i++) {
+            // If lowercase letter, convert to uppercase
+            if (uint8(bStr[i]) >= 97 && uint8(bStr[i]) <= 122) {
+                bUpper[i] = bytes1(uint8(bStr[i]) - 32);
+            } else {
+                bUpper[i] = bStr[i];
+            }
+        }
+        
+        return string(bUpper);
     }
     
     /**
