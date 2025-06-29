@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Play, CheckCircle, Clock, RotateCcw } from 'lucide-react';
+import { Play, CheckCircle, Clock } from 'lucide-react';
 import { useAccount, useBlockNumber, useReadContract, useWriteContract } from "wagmi";
+import { formatEther } from "viem";
 
 import TileTokenERC20 from "../artifacts/contracts/TileTokenERC20.sol/TileTokenERC20.json";
 import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json";
@@ -97,7 +98,7 @@ const TokenTiles: React.FC = () => {
   // Letter changing state
   const [playerLetters, setPlayerLetters] = useState<string[]>([]);
 
-  const { data: tokenBalance } = useReadContract({
+  const { data: tokenBalance = 0 } = useReadContract({
     address: import.meta.env.VITE_TILETOKENERC20,
     abi: TileTokenERC20.abi,
     functionName: 'balanceOf',
@@ -286,7 +287,7 @@ const TokenTiles: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center justify-center space-x-4 text-sm text-gray-300 mb-4">
-                      <span>Token Balance: {Number(tokenBalance)} TILE</span>
+                      <span>Token Balance: {formatEther(tokenBalance)} TILE</span>
                       <span>•</span>
                       <span>{currentGame.submissions} players</span>
                     </div>
