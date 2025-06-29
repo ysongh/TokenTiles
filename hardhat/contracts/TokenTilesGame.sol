@@ -94,10 +94,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     mapping(address => uint256) public playerTotalSwaps;
     mapping(address => uint256) public playerGamesCreated;
     
-    // Leaderboard
-    address[] public leaderboard;
-    mapping(address => uint256) public leaderboardIndex;
-    
     // Events
     event WordListCreated(uint256 indexed wordListId, address indexed creator, string word3, string word4, string word5, string word6);
     event SessionStarted(uint256 indexed sessionId, uint256 indexed wordListId, address indexed creator, uint256 timestamp);
@@ -105,7 +101,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     event PlayerJoined(uint256 indexed sessionId, address indexed player, uint256[] tiles);
     event WordSubmitted(uint256 indexed sessionId, address indexed player, string word, bool valid, uint256 points);
     event TokensRewarded(address indexed player, uint256 amount);
-    event LeaderboardUpdated(address indexed player, uint256 newTotal);
     event TileSwapped(uint256 indexed sessionId, address indexed player, uint256 oldTile, uint256 newTile, uint256 swapsRemaining);
     event SessionCompleted(uint256 indexed sessionId, uint256 timestamp);
     event TargetWordClaimed(
@@ -192,47 +187,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         return newSessionId;
     }
 
-    
-    /**
-     * @dev Set the current active session (players can only join the active session)
-     * @param sessionId ID of the session to make active
-     */
-    function setActiveSession(uint256 sessionId) external {
-        require(sessionId > 0 && sessionId <= _sessionIds, "Invalid session ID");
-        GameSession storage session = gameSessions[sessionId];
-        require(session.active, "Session is not active");
-        require(session.creator == msg.sender, "Only session creator can set as active");
-        
-        currentActiveSessionId = sessionId;
-        hasActiveSession = true;
-    }
-    
-    /**
-     * @dev End a specific game session
-     * @param sessionId ID of the session to end
-     */
-    function endSession(uint256 sessionId) external {
-        require(sessionId > 0 && sessionId <= _sessionIds, "Invalid session ID");
-        
-        GameSession storage session = gameSessions[sessionId];
-        require(session.active, "Session already ended");
-        require(session.creator == msg.sender || block.timestamp >= session.startTime + 1 hours, "Only creator can end early, or anyone after 1 hour");
-        
-        session.active = false;
-        session.endTime = block.timestamp;
-        
-        // If this was the current active session, clear it
-        if (currentActiveSessionId == sessionId) {
-            hasActiveSession = false;
-            currentActiveSessionId = 0;
-        }
-        
-        // Get top players for this session (simplified)
-        address[] memory topPlayers = new address[](0); // Could implement session-specific leaderboard
-        
-        emit SessionEnded(sessionId, block.timestamp, topPlayers);
-    }
-    
     /**
      * @dev Join a specific game session
      * @param sessionId ID of the session to join
@@ -645,31 +599,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         GameSession storage session = gameSessions[sessionId];
         require(session.players[player], "Player not in session");
         return session.submittedWords[player];
-    }
-
-    /**
-     * @dev Get player's submitted words in current session (backward compatibility)
-     * @param player Player address
-     * @return Array of submitted words
-     */
-    function getPlayerWords(address player) external view returns (string[] memory) {
-        require(hasActiveSession, "No active session");
-        GameSession storage session = gameSessions[currentActiveSessionId];
-        require(session.players[player], "Player not in current session");
-        return session.submittedWords[player];
-    }
-    
-    /**
-     * @dev Get player's score in a specific session
-     * @param sessionId ID of the session
-     * @param player Player address
-     * @return Current session score
-     */
-    function getPlayerSessionScore(uint256 sessionId, address player) external view returns (uint256) {
-        require(sessionId > 0 && sessionId <= _sessionIds, "Invalid session ID");
-        GameSession storage session = gameSessions[sessionId];
-        require(session.players[player], "Player not in session");
-        return session.playerScores[player];
     }
     
     /**
