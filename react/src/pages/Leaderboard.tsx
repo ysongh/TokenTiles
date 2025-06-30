@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Shuffle, Trophy, Wallet, Play, CheckCircle, Clock, Star, Coins, Crown, Medal, Award, TrendingUp, Users } from 'lucide-react';
+import React, { useState } from 'react';
+import { Trophy, Star, Coins, Crown, Medal, Award, TrendingUp, Users } from 'lucide-react';
 
 interface LeaderboardEntry {
   rank: number;
@@ -108,7 +108,7 @@ interface LeaderboardEntry {
   ];
 
 const Leaderboard: React.FC = () => {
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(mockLeaderboard);
+  const [leaderboard] = useState<LeaderboardEntry[]>(mockLeaderboard);
 
   const getRankIcon = (rank: number) => {
     switch (rank) {

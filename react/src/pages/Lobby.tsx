@@ -101,12 +101,12 @@ function Lobby() {
           </div>
         </div>
 
-        <button
+        {/* <button
           onClick={() => navigate("/leaderboard")}
           className="w-full bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 text-gray-900 font-semibold py-3 px-6 rounded-xl shadow hover:shadow-lg transition-all mt-4"
         >
           🏆 Leaderboard
-        </button>
+        </button> */}
       </div>
     </div>
   )

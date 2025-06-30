@@ -87,13 +87,12 @@ const TokenTiles: React.FC = () => {
   const { address } = useAccount();
   const { data: blockNumber } = useBlockNumber({ watch: true })
 
-  const [currentGame, setCurrentGame] = useState<Game | null>(mockGames[0]);
+  const [currentGame] = useState<Game | null>(mockGames[0]);
   const [userInput, setUserInput] = useState('');
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [timeLeft] = useState(0);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [showSuccess, setShowSuccess] = useState(false);
 
   // Letter changing state
   const [playerLetters, setPlayerLetters] = useState<string[]>([]);
@@ -142,6 +141,7 @@ const TokenTiles: React.FC = () => {
   // Initialize player letters from contract data
   useEffect(() => {
     if (playerWords && playerWords.length > 0) {
+      // @ts-ignore
       const letters = playerWords.map((p: BigInt) => numberToLetter[Number(p) + 1]);
       setPlayerLetters(letters);
     }
