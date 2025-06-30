@@ -7,5 +7,8 @@
  npx hardhat node
  ```
 
- # Deploy to localhost
-`npx hardhat ignition deploy ./ignition/modules/TokenTiles.js --network localhost`
+## Deploy to localhost
+npx hardhat ignition deploy ./ignition/modules/TokenTiles.js --network localhost
+
+## Deploy to Base Sepolia
+npx hardhat ignition deploy ./ignition/modules/TokenTiles.js --network baseSepolia
