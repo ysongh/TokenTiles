@@ -1,17 +1,14 @@
 import { farcasterFrame } from "@farcaster/frame-wagmi-connector";
 import { http, createConfig } from "wagmi";
 import { injected, metaMask } from 'wagmi/connectors'
-import { base, baseSepolia, mainnet, hardhat } from "wagmi/chains";
+import { baseSepolia } from "wagmi/chains";
 
 export const config = createConfig({
-  chains: [base, baseSepolia, mainnet, hardhat],
+  chains: [baseSepolia],
   connectors: [farcasterFrame(), injected(), metaMask()],
   multiInjectedProviderDiscovery: false,
   transports: {
-    [base.id]: http(),
-    [baseSepolia.id]: http(),
-    [mainnet.id]: http(),
-    [hardhat.id]: http(),
+    [baseSepolia.id]: http()
   },
 });
 

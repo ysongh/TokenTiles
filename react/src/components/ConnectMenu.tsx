@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Shuffle, Wallet } from "lucide-react";
-import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import {
+  DynamicUserProfile,
+  DynamicWidget,
+  useDynamicContext
+} from "@dynamic-labs/sdk-react-core";
 import {
   useAccount,
   useConnect,
@@ -14,7 +18,7 @@ import { formatAddress } from '../utils/format';
 
 export function ConnectMenu() {
   const { isConnected, address } = useAccount();
-  const { handleLogOut } = useDynamicContext();
+  const { handleLogOut, setShowDynamicUserProfile } = useDynamicContext();
   const { connect, connectors } = useConnect();
   const chains = useChains();
   const chainId = useChainId();
@@ -50,7 +54,7 @@ export function ConnectMenu() {
 
         {isConnected ? (
           <div className="flex items-center space-x-4">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2" onClick={() => setShowDynamicUserProfile(true)}>
               <span className="text-sm text-gray-300">Connected: {currentChain ? currentChain.name : 'Not connected'}</span>
               <p className="font-mono text-sm">{formatAddress(address || "")}</p>
             </div>
@@ -74,6 +78,7 @@ export function ConnectMenu() {
           </div>
         )}
       </div>
+      <DynamicUserProfile />
     </div>
   );
 }
