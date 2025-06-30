@@ -193,7 +193,7 @@ const TokenTiles: React.FC = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  console.log(wordList);
+  console.log(gameData);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
@@ -233,16 +233,16 @@ const TokenTiles: React.FC = () => {
                   <div className="mb-6">
                     <h2 className="text-lg font-semibold text-gray-100 mb-2">🎯 Target Words</h2>
                     <ul className="grid grid-cols-2 gap-2">
-                      <li className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm">
+                      <li className={`bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm ${gameData[7] && 'line-through'}`}>
                         {wordList[0]}
                       </li>
-                      <li className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm">
+                      <li className={`bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm ${gameData[8] && 'line-through'}`}>
                         {wordList[1]}
                       </li>
-                      <li className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm">
+                      <li className={`bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm ${gameData[9] && 'line-through'}`}>
                         {wordList[2]}
                       </li>
-                      <li className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm">
+                      <li className={`bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-white border border-white/20 shadow-sm ${gameData[10] && 'line-through'}`}>
                         {wordList[3]}
                       </li>
                     </ul>

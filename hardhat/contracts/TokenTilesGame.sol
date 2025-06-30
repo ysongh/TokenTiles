@@ -545,7 +545,11 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         uint256 playerCount,
         uint256 startTime,
         uint256 endTime,
-        address creator
+        address creator,
+        bool word3LetterClaimed,
+        bool word4LetterClaimed,
+        bool word5LetterClaimed,
+        bool word6LetterClaimed
     ) {
         require(sessionId > 0 && sessionId <= _sessionIds, "Invalid session ID");
         
@@ -557,7 +561,11 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
             session.playerCount,
             session.startTime,
             session.endTime,
-            session.creator
+            session.creator,
+            session.word3LetterClaimed,
+            session.word4LetterClaimed,
+            session.word5LetterClaimed,
+            session.word6LetterClaimed
         );
     }
     
