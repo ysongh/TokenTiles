@@ -29,7 +29,7 @@ function Lobby() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
-      <div className="container mx-auto px-4 py-8 w-[600px]">
+      <div className="container max-w-2xl mx-auto px-4 py-8">
         <button
           onClick={() => navigate("/createwords")}
           className="w-full bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-gray-900 font-semibold py-3 px-6 rounded-xl shadow hover:shadow-lg transition-all mb-4"
@@ -85,9 +85,9 @@ function Lobby() {
                     </svg>
                     {game?.playerCount?.toString()} Players
                   </span>
-                  <span className="font-mono text-xs text-gray-400">
+                  {/* <span className="font-mono text-xs text-gray-400">
                     Ends: {game?.endTime?.toString()}
-                  </span>
+                  </span> */}
                 </div>
 
                 <button

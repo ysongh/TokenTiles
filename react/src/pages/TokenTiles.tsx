@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Play, CheckCircle, Clock } from 'lucide-react';
 import { useAccount, useBlockNumber, useReadContract, useWriteContract } from "wagmi";
 import { formatEther } from "viem";
@@ -84,12 +84,12 @@ const mockGames: Game[] = [
 
 const TokenTiles: React.FC = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { address } = useAccount();
   const { data: blockNumber } = useBlockNumber({ watch: true })
 
   const [currentGame] = useState<Game | null>(mockGames[0]);
   const [userInput, setUserInput] = useState('');
-  const [timeLeft] = useState(0);
 
   const [isLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -187,11 +187,11 @@ const TokenTiles: React.FC = () => {
     })
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  // const formatTime = (seconds: number) => {
+  //   const mins = Math.floor(seconds / 60);
+  //   const secs = seconds % 60;
+  //   return `${mins}:${secs.toString().padStart(2, '0')}`;
+  // };
 
   console.log(gameData);
 
@@ -204,20 +204,14 @@ const TokenTiles: React.FC = () => {
           </div>
         )}
 
-          <div className="w-[500px] mx-auto">
+          <div className="max-w-2xl mx-auto">
             <button
-              onClick={joinGame}
-              className="w-full bg-green-200 hover:bg-green-300 text-gray-800 py-2 px-6 rounded-lg transition-colors mb-3"
+              onClick={() => navigate("/")}
+              className="w-full flex-1 bg-gray-400 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors mb-3"
             >
-             Join Game
+              Back
             </button>
-            {isPending && <div className="my-4">Pending...</div>}
-            {txHash && (
-              <div className="mb-4">
-                {txHash}
-              </div>
-            )}
-
+            
             {/* Current Game */}
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
               {currentGame ? (
@@ -226,7 +220,7 @@ const TokenTiles: React.FC = () => {
                     <h3 className="text-xl font-bold">Current Game #{gameData[0] && gameData[0]?.toString()}</h3>
                     <div className="flex items-center text-orange-400">
                       <Clock className="w-5 h-5 mr-1" />
-                      <span className="font-mono">{formatTime(timeLeft)}</span>
+                      {/* <span className="font-mono">{formatTime(timeLeft)}</span> */}
                     </div>
                   </div>
 
@@ -335,6 +329,19 @@ const TokenTiles: React.FC = () => {
                 </div>
               )}
             </div>
+
+            <button
+              onClick={joinGame}
+              className="w-full mt-3 bg-green-200 hover:bg-green-300 text-gray-800 py-2 px-6 rounded-lg transition-colors mb-3"
+            >
+             Join Game
+            </button>
+            {isPending && <div className="my-4">Pending...</div>}
+            {txHash && (
+              <div className="mb-4">
+                {txHash}
+              </div>
+            )}
           </div>
       </div>
     </div>
