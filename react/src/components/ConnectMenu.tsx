@@ -42,9 +42,9 @@ export function ConnectMenu() {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-3" onClick={() => navigate("/")}>
           <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-3 rounded-xl">
-            <Shuffle className="w-8 h-8 text-white" />
+            <Shuffle className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent cursor-pointer">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent cursor-pointer sm:text-4xl">
             TokenTiles
           </h1>
         </div>
