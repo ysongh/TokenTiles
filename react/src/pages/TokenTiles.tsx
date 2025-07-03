@@ -4,6 +4,7 @@ import { CheckCircle, Clock } from 'lucide-react';
 import { useAccount, useBlockNumber, useReadContract, useWriteContract } from "wagmi";
 import { formatEther } from "viem";
 
+import GameRulesPopup from '../components/GameRulesPopup';
 import TileTokenERC20 from "../artifacts/contracts/TileTokenERC20.sol/TileTokenERC20.json";
 import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json";
 
@@ -157,7 +158,7 @@ const TokenTiles: React.FC = () => {
           </div>
         )}
 
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto mt-4">
             <button
               onClick={() => navigate("/")}
               className="w-full flex-1 bg-gray-400 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors mb-3"
@@ -170,8 +171,8 @@ const TokenTiles: React.FC = () => {
               <div>
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xl font-bold">Current Game #{gameData[0] && gameData[0]?.toString()}</h3>
-                  <div className="flex items-center text-orange-400">
-                    <Clock className="w-5 h-5 mr-1" />
+                  <div className="flex items-center text-yellow-400">
+                    <GameRulesPopup />
                     {/* <span className="font-mono">{formatTime(timeLeft)}</span> */}
                   </div>
                 </div>
