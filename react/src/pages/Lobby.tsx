@@ -27,6 +27,8 @@ function Lobby() {
 
   console.log(games);
 
+  const sortGames = games.slice().reverse();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
       <div className="container max-w-2xl mx-auto px-4 py-8">
@@ -43,7 +45,7 @@ function Lobby() {
           </h3>
           
           <div className="space-y-4">
-            {games.map((game) => (
+            {sortGames.map((game) => (
               <div
                 key={game?.sessionId?.toString()}
                 className="bg-gradient-to-br from-white/10 via-white/5 to-white/10 border border-white/10 rounded-xl p-5 hover:scale-[1.02] hover:bg-white/10 transition-all duration-200 cursor-pointer shadow-lg"
