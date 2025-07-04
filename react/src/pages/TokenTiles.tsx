@@ -5,6 +5,8 @@ import { useAccount, useBlockNumber, useReadContract, useWriteContract } from "w
 import { formatEther } from "viem";
 
 import GameRulesPopup from '../components/GameRulesPopup';
+import ViewTransaction from '../components/ViewTransaction';
+
 import TileTokenERC20 from "../artifacts/contracts/TileTokenERC20.sol/TileTokenERC20.json";
 import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json";
 
@@ -161,7 +163,7 @@ const TokenTiles: React.FC = () => {
           <div className="max-w-2xl mx-auto mt-4">
             <button
               onClick={() => navigate("/")}
-              className="w-full flex-1 bg-gray-400 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors mb-3"
+              className="flex-1 bg-gray-400 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors mb-3"
             >
               Back
             </button>
@@ -284,9 +286,7 @@ const TokenTiles: React.FC = () => {
             </button>
             {isPending && <div className="my-4">Pending...</div>}
             {txHash && (
-              <div className="mb-4">
-                {txHash}
-              </div>
+              <ViewTransaction txHash={txHash} />
             )}
           </div>
       </div>

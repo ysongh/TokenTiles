@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWriteContract } from "wagmi";
 
+import ViewTransaction from '../components/ViewTransaction';
 import TokenTilesGame from "../artifacts/contracts/TokenTilesGame.sol/TokenTilesGame.json";
 
 interface GameFormData {
@@ -87,6 +88,14 @@ const CreateWords: React.FC = () => {
           </div>
         )}
         <div className="flex items-center justify-center p-4">
+          <div>
+            <button
+              onClick={() => navigate("/")}
+              className="bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors mb-4"
+            >
+              Back
+            </button>
+
             <div className="bg-gradient-to-br from-purple-900 to-indigo-900 rounded-2xl p-8 max-w-2xl w-full">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Create Custom Game</h2>
@@ -179,12 +188,7 @@ const CreateWords: React.FC = () => {
                 </div>
 
                 <div className="flex space-x-4">
-                  <button
-                   onClick={() => navigate("/")}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors"
-                  >
-                    Cancel
-                  </button>
+                  
                   <button
                     onClick={createGame}
                     className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 px-6 py-3 rounded-lg font-semibold transition-all disabled:opacity-50 flex items-center justify-center"
@@ -199,13 +203,12 @@ const CreateWords: React.FC = () => {
 
                 {isPending && <div className="my-4">Pending...</div>}
                 {txHash && (
-                  <div className="mb-4">
-                    {txHash}
-                  </div>
+                  <ViewTransaction txHash={txHash} />
                 )}
               </div>
             </div>
           </div>
+        </div>
       </div>
     </div>
   );
