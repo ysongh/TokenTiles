@@ -1,41 +1,35 @@
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { Shuffle, Wallet } from "lucide-react";
+import { Shuffle } from "lucide-react";
 import {
   DynamicUserProfile,
-  DynamicWidget,
-  useDynamicContext
+  DynamicWidget
 } from "@dynamic-labs/sdk-react-core";
-import {
-  useAccount,
-  useConnect,
-  useChains,
-  useChainId
-} from "wagmi";
-import sdk from "@farcaster/frame-sdk";
+// import {
+//   useChains,
+//   useChainId
+// } from "wagmi";
+// import sdk from "@farcaster/frame-sdk";
 
-import { formatAddress } from '../utils/format';
 
 export function ConnectMenu() {
-  const { isConnected, address } = useAccount();
-  const { handleLogOut, setShowDynamicUserProfile } = useDynamicContext();
-  const { connect, connectors } = useConnect();
-  const chains = useChains();
-  const chainId = useChainId();
+  // const { isConnected, address } = useAccount();
+  // const { handleLogOut, setShowDynamicUserProfile } = useDynamicContext();
+  // const { connect, connectors } = useConnect();
   const navigate = useNavigate();
 
-  const currentChain = chains.find(chain => chain.id === chainId);
+  // const currentChain = chains.find(chain => chain.id === chainId);
 
-  const [isMiniApp, setIsMiniApp] = useState<Boolean>(false);
+  // const [isMiniApp, setIsMiniApp] = useState<Boolean>(false);
 
-  useEffect(() => {
-    const loadSDK = async () => {
-      // @ts-ignore
-      const newIsMiniApp = await sdk.isInMiniApp();
-      setIsMiniApp(newIsMiniApp);
-    }
-    loadSDK();
-  }, [])
+  // useEffect(() => {
+  //   const loadSDK = async () => {
+  //     // @ts-ignore
+  //     const newIsMiniApp = await sdk.isInMiniApp();
+  //     setIsMiniApp(newIsMiniApp);
+  //   }
+  //   loadSDK();
+  // }, [])
 
   return (
     <div className="bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
@@ -49,7 +43,7 @@ export function ConnectMenu() {
           </h1>
         </div>
 
-        {isConnected ? (
+        {/* {isConnected ? (
           <div className="items-center space-x-4 hidden sm:flex">
             <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2" onClick={() => setShowDynamicUserProfile(true)}>
               <span className="text-sm text-gray-300">Connected: {currentChain ? currentChain.name : 'Not connected'}</span>
@@ -73,7 +67,7 @@ export function ConnectMenu() {
             </button>
             <DynamicWidget />
           </div>
-        )}
+        )} */}
         <DynamicWidget />
       </div>
       <DynamicUserProfile />

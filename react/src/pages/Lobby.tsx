@@ -51,7 +51,7 @@ function Lobby() {
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center gap-3">
                     <span className="inline-block bg-indigo-500/40 rounded-full px-3 py-1 text-xs uppercase tracking-wider font-semibold text-indigo-100">
-                      {game?.gameName}
+                      Game #{Number(game?.wordListId)}
                     </span>
                     <span
                       className={`text-xs font-bold ${

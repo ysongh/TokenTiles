@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CheckCircle, Clock } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { useAccount, useBlockNumber, useReadContract, useWriteContract } from "wagmi";
 import { formatEther } from "viem";
 
