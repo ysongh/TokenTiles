@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
 import { useAccount, useBlockNumber, useReadContract, useWriteContract } from "wagmi";
 import { formatEther } from "viem";
+import { sdk } from '@farcaster/frame-sdk';
 
 import GameRulesPopup from '../components/GameRulesPopup';
 import ViewTransaction from '../components/ViewTransaction';
@@ -141,6 +142,27 @@ const TokenTiles: React.FC = () => {
       functionName: "swapTile",
       args: [id, index]
     })
+  };
+
+  const handleComposeCast = async () => {
+    try {
+      const result = await sdk.actions.composeCast({
+        text: 'Check out my mini app🎉',
+        embeds: ["https://tokentiles.netlify.app/#/game/" + id],
+        // Optional: parent cast reference
+        // parent: { type: 'cast', hash: '0xabc123...' },
+        // Optional: close the app after composing
+        // close: true,
+      });
+  
+      if (result) {
+        console.log('Cast composed:', result.cast);
+      } else {
+        console.log('Cast composition was closed or canceled.');
+      }
+    } catch (error) {
+      console.error('Error composing cast:', error);
+    }
   };
 
   // const formatTime = (seconds: number) => {
@@ -283,6 +305,12 @@ const TokenTiles: React.FC = () => {
               className="w-full mt-3 bg-green-200 hover:bg-green-300 text-gray-800 py-2 px-6 rounded-lg transition-colors mb-3"
             >
              Join Game
+            </button>
+            <button
+              onClick={handleComposeCast}
+              className="w-full py-2 px-4 my-2 bg-green-600 text-white font-medium rounded hover:bg-green-700"
+            >
+              Share on Farcaster 🚀
             </button>
             {isPending && <div className="my-4">Pending...</div>}
             {txHash && (
