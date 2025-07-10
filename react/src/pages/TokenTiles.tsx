@@ -260,7 +260,7 @@ const TokenTiles: React.FC = () => {
                   <div className="flex items-center justify-center space-x-4 text-sm text-gray-300 mb-4">
                     <span>Token Balance: {formatEther(tokenBalance)} TILE</span>
                     <span>•</span>
-                    {/* <span>players</span> */}
+                    <span>{Number(gameData[3])} players</span>
                   </div>
                 </div>
                 }
