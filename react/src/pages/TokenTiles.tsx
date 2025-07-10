@@ -300,12 +300,12 @@ const TokenTiles: React.FC = () => {
               </div>
             </div>
 
-            <button
+            {playerWords.length === 0 && <button
               onClick={joinGame}
               className="w-full mt-3 bg-green-200 hover:bg-green-300 text-gray-800 py-2 px-6 rounded-lg transition-colors mb-3"
             >
              Join Game
-            </button>
+            </button>}
             <button
               onClick={handleComposeCast}
               className="w-full py-2 px-4 my-2 bg-green-600 text-white font-medium rounded hover:bg-green-700"
