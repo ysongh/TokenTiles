@@ -176,12 +176,11 @@ const TokenTiles: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
       <div className="container mx-auto px-4 py-8">
-        {message && (
-          <div className="mb-6 p-4 bg-blue-600/20 border border-blue-500/30 rounded-lg text-center">
-            {message}
-          </div>
-        )}
-
+          {isPending && <div className="my-4">Pending...</div>}
+          {txHash && (
+            <ViewTransaction txHash={txHash} />
+          )}
+          
           <div className="max-w-2xl mx-auto mt-4">
             <button
               onClick={() => navigate("/")}
@@ -312,10 +311,6 @@ const TokenTiles: React.FC = () => {
             >
               Share on Farcaster 🚀
             </button>
-            {isPending && <div className="my-4">Pending...</div>}
-            {txHash && (
-              <ViewTransaction txHash={txHash} />
-            )}
           </div>
       </div>
     </div>

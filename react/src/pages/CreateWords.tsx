@@ -89,6 +89,11 @@ const CreateWords: React.FC = () => {
         )}
         <div className="flex items-center justify-center p-4">
           <div>
+            {isPending && <div className="my-4">Pending...</div>}
+            {txHash && (
+              <ViewTransaction txHash={txHash} />
+            )}
+
             <button
               onClick={() => navigate("/")}
               className="bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors mb-4"
@@ -200,11 +205,6 @@ const CreateWords: React.FC = () => {
                     )}
                   </button>
                 </div>
-
-                {isPending && <div className="my-4">Pending...</div>}
-                {txHash && (
-                  <ViewTransaction txHash={txHash} />
-                )}
               </div>
             </div>
           </div>
