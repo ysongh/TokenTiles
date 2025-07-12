@@ -49,7 +49,6 @@ const TokenTiles: React.FC = () => {
   const [userInput, setUserInput] = useState('');
 
   const [isLoading] = useState(false);
-  const [message, setMessage] = useState('');
 
   // Letter changing state
   const [playerLetters, setPlayerLetters] = useState<string[]>([]);
@@ -89,6 +88,14 @@ const TokenTiles: React.FC = () => {
     args: [id, address]
   }) as { data: any, refetch: () => void  };
 
+
+  const { data: submittedWords = [], refetch: submittedWordsRefetch } = useReadContract({
+    address: import.meta.env.VITE_TOKENTILESGAME,
+    abi: TokenTilesGame.abi,
+    functionName: 'getPlayerWords',
+    args: [id, address]
+  }) as { data: any, refetch: () => void };
+
   const {
     writeContract,
     data: txHash,
@@ -107,6 +114,7 @@ const TokenTiles: React.FC = () => {
   useEffect(() => {
     wordListRefetch();
     changesRemainingRefetch();
+    submittedWordsRefetch();
   }, [blockNumber])
 
   const joinGame = () => {
@@ -130,12 +138,6 @@ const TokenTiles: React.FC = () => {
   };
 
   const handleLetterClick = (index: number) => {
-    if (changesRemaining <= 0) {
-      setMessage('No more letter changes remaining!');
-      setTimeout(() => setMessage(''), 3000);
-      return;
-    }
-
     writeContract({
       address: import.meta.env.VITE_TOKENTILESGAME,
       abi: TokenTilesGame.abi,
@@ -171,7 +173,7 @@ const TokenTiles: React.FC = () => {
   //   return `${mins}:${secs.toString().padStart(2, '0')}`;
   // };
 
-  console.log(gameData);
+  console.log(submittedWords);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
@@ -296,6 +298,22 @@ const TokenTiles: React.FC = () => {
                     )}
                   </button>
                 </div>}
+
+                {submittedWords.length > 0 && (
+                  <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-gray-100 mb-3">✅ Your Submitted Words</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {submittedWords.map((word: string, index: number) => (
+                        <div 
+                          key={index} 
+                          className="bg-green-500/20 border border-green-400/30 px-3 py-2 rounded-lg text-center font-mono text-sm tracking-wide text-green-200"
+                        >
+                          {word}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
