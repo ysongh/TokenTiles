@@ -88,12 +88,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     uint256 public currentActiveSessionId;
     bool public hasActiveSession;
     
-    // Player statistics
-    mapping(address => uint256) public playerTotalRewards;
-    mapping(address => uint256) public playerWordsSubmitted;
-    mapping(address => uint256) public playerTotalSwaps;
-    mapping(address => uint256) public playerGamesCreated;
-    
     // Events
     event WordListCreated(uint256 indexed wordListId, address indexed creator, string word3, string word4, string word5, string word6);
     event SessionStarted(uint256 indexed sessionId, uint256 indexed wordListId, address indexed creator, uint256 timestamp);
@@ -161,8 +155,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         newWordList.creator = msg.sender;
         newWordList.createdAt = block.timestamp;
         newWordList.active = true;
-        
-        playerGamesCreated[msg.sender]++;
         
         emit WordListCreated(newWordListId, msg.sender, newWordList.word3Letter, newWordList.word4Letter, newWordList.word5Letter, newWordList.word6Letter);
         
@@ -249,7 +241,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         
         // Increment swap counters
         session.playerSwapsUsed[msg.sender]++;
-        playerTotalSwaps[msg.sender]++;
         
         uint256 swapsRemaining = MAX_SWAPS_PER_SESSION - session.playerSwapsUsed[msg.sender];
         
@@ -324,11 +315,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
                 
                 // Mint reward tokens
                 rewardToken.mintReward(msg.sender, points);
-                
-                // Update player statistics
-                playerTotalRewards[msg.sender] += points;
-                playerWordsSubmitted[msg.sender]++;
-                session.playerScores[msg.sender] += points;
                 
                 emit TokensRewarded(msg.sender, points);
                 emit TargetWordClaimed(sessionId, msg.sender, upperWord, targetWordType, points);
