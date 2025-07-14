@@ -4,7 +4,6 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 import "./TokenTilesERC1155.sol";
@@ -14,7 +13,7 @@ import "./TileTokenERC20.sol";
  * @title TokenTilesGame
  * @dev Main game contract managing sessions and word validation with custom word lists
  */
-contract TokenTilesGame is Pausable, ReentrancyGuard {    
+contract TokenTilesGame is ReentrancyGuard {    
     // Contract references
     TokenTilesERC1155 public immutable tilesContract;
     TileTokenERC20 public immutable rewardToken;
@@ -131,7 +130,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         string memory word4Letter,
         string memory word5Letter,
         string memory word6Letter
-    ) external whenNotPaused returns (uint256 sessionId) {
+    ) external returns (uint256 sessionId) {
         require(bytes(word3Letter).length == 3, "3-letter word must be exactly 3 characters");
         require(bytes(word4Letter).length == 4, "4-letter word must be exactly 4 characters");
         require(bytes(word5Letter).length == 5, "5-letter word must be exactly 5 characters");
@@ -183,7 +182,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
      * @dev Join a specific game session
      * @param sessionId ID of the session to join
      */
-    function joinGame(uint256 sessionId) external whenNotPaused nonReentrant {
+    function joinGame(uint256 sessionId) external nonReentrant {
         require(sessionId > 0 && sessionId <= _sessionIds, "Invalid session ID");
         
         GameSession storage session = gameSessions[sessionId];
@@ -215,7 +214,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
      * @param sessionId ID of the session
      * @param tileIndex Index of the tile to swap (0-6)
      */
-    function swapTile(uint256 sessionId, uint256 tileIndex) external whenNotPaused nonReentrant {
+    function swapTile(uint256 sessionId, uint256 tileIndex) external nonReentrant {
         require(sessionId > 0 && sessionId <= _sessionIds, "Invalid session ID");
         
         GameSession storage session = gameSessions[sessionId];
@@ -252,7 +251,7 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
     * @param sessionId ID of the session
     * @param word The word to submit
     */
-    function submitWord(uint256 sessionId, string memory word) external whenNotPaused nonReentrant {
+    function submitWord(uint256 sessionId, string memory word) external nonReentrant {
         require(sessionId > 0 && sessionId <= _sessionIds, "Invalid session ID");
         
         GameSession storage session = gameSessions[sessionId];
@@ -593,20 +592,6 @@ contract TokenTilesGame is Pausable, ReentrancyGuard {
         GameSession storage session = gameSessions[sessionId];
         require(session.players[player], "Player not in session");
         return session.submittedWords[player];
-    }
-    
-    /**
-     * @dev Pause contract
-     */
-    function pause() external {
-        _pause();
-    }
-    
-    /**
-     * @dev Unpause contract
-     */
-    function unpause() external {
-        _unpause();
     }
     
     /**
