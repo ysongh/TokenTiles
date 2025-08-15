@@ -460,7 +460,8 @@ contract TokenTilesGame is ReentrancyGuard, RandomnessReceiverBase {
                     block.timestamp,
                     block.prevrandao,
                     player,
-                    i
+                    i,
+                    randomness
                 ))
             );
             tiles[i] = randomValue % 26; // 0-25 for A-Z
@@ -486,6 +487,16 @@ contract TokenTilesGame is ReentrancyGuard, RandomnessReceiverBase {
             ))
         );
         return randomValue % 26; // 0-25 for A-Z
+    }
+
+    /// @notice Requests randomness using the direct funding option
+    /// @dev Calls `_requestRandomnessPayInNative` to get a random value, updating `requestId` with the request ID
+    function generateWithDirectFunding(uint32 callbackGasLimit) external payable returns (uint256, uint256) {
+        // create randomness request
+        (uint256 requestID, uint256 requestPrice) = _requestRandomnessPayInNative(callbackGasLimit);
+        // store request id
+        requestId = requestID;
+        return (requestID, requestPrice);
     }
 
     // Helper function to get who claimed a specific word
