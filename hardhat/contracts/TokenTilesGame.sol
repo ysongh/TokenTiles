@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { RandomnessReceiverBase } from "randomness-solidity/src/RandomnessReceiverBase.sol";
 
 import "./TokenTilesERC1155.sol";
 import "./TileTokenERC20.sol";
@@ -13,7 +14,7 @@ import "./TileTokenERC20.sol";
  * @title TokenTilesGame
  * @dev Main game contract managing sessions and word validation with custom word lists
  */
-contract TokenTilesGame is ReentrancyGuard {    
+contract TokenTilesGame is ReentrancyGuard, RandomnessReceiverBase {    
     // Contract references
     TokenTilesERC1155 public immutable tilesContract;
     TileTokenERC20 public immutable rewardToken;
@@ -24,6 +25,12 @@ contract TokenTilesGame is ReentrancyGuard {
     uint256 public constant WORD_LENGTH_MULTIPLIER = 2 * 10**18; // 2 TILE per letter
     uint256 public constant MAX_SWAPS_PER_SESSION = 100;
     uint256 public constant GAME_CREATION_FEE = 0 * 10**18; // 0 TILE token to create a game
+
+    /// @notice Stores the latest received randomness value
+    bytes32 public randomness;
+
+    /// @notice Stores the request ID of the latest randomness request
+    uint256 public requestId;
 
     // Target word list structure for each game
     struct TargetWordList {
@@ -112,8 +119,11 @@ contract TokenTilesGame is ReentrancyGuard {
 
     constructor(
         address _tilesContract,
-        address _rewardToken
-    ) {
+        address _rewardToken,
+        address _randomnessSender
+    )
+        RandomnessReceiverBase(_randomnessSender, msg.sender)
+    {
         tilesContract = TokenTilesERC1155(_tilesContract);
         rewardToken = TileTokenERC20(_rewardToken);
     }
@@ -618,5 +628,14 @@ contract TokenTilesGame is ReentrancyGuard {
         bytes memory
     ) public pure returns (bytes4) {
         return this.onERC1155BatchReceived.selector;
+    }
+
+    /// @notice Callback function that processes received randomness
+    /// @dev Ensures the received request ID matches the stored one before updating state
+    /// @param requestID The ID of the randomness request
+    /// @param _randomness The random value received from the oracle
+    function onRandomnessReceived(uint256 requestID, bytes32 _randomness) internal override {
+        require(requestId == requestID, "Request ID mismatch");
+        randomness = _randomness;
     }
 }
