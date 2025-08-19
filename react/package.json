@@ -19,6 +19,7 @@
     "@tailwindcss/vite": "^4.1.8",
     "@tanstack/react-query": "5.45.1",
     "lucide-react": "^0.514.0",
+    "randomness-js": "^1.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.6.2",

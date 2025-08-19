@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
-import { useAccount, useBlockNumber, useReadContract, useWriteContract } from "wagmi";
+import { useAccount, useBlockNumber, useReadContract, useWriteContract, useWalletClient } from "wagmi";
 import { formatEther } from "viem";
 import { sdk } from '@farcaster/frame-sdk';
+import { Randomness } from "randomness-js";
 
 import GameRulesPopup from '../components/GameRulesPopup';
 import ViewTransaction from '../components/ViewTransaction';
@@ -43,7 +44,8 @@ const numberToLetter = {
 const TokenTiles: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
+  const { data: walletClient } = useWalletClient();
   const { data: blockNumber } = useBlockNumber({ watch: true })
 
   const [userInput, setUserInput] = useState('');
@@ -117,6 +119,13 @@ const TokenTiles: React.FC = () => {
     submittedWordsRefetch();
   }, [blockNumber])
 
+  const requestRandomness = async () => {
+    const randomness = Randomness.createBaseSepolia(walletClient);
+    console.log(randomness);
+    const response = await randomness.requestRandomness();
+    console.log(response);
+  }
+
   const joinGame = () => {
     writeContract({
       address: import.meta.env.VITE_TOKENTILESGAME,
@@ -189,6 +198,13 @@ const TokenTiles: React.FC = () => {
               className="flex-1 bg-gray-400 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors mb-3"
             >
               Back
+            </button>
+
+            <button
+              onClick={requestRandomness}
+              className="flex-1 bg-gray-400 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors mb-3"
+            >
+              Request randomness
             </button>
             
             {/* Current Game */}
