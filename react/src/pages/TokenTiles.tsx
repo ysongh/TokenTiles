@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
-import { useAccount, useBlockNumber, useReadContract, useWriteContract, useWalletClient } from "wagmi";
+import { useAccount, useBlockNumber, useReadContract, useWriteContract, useWalletClient, usePublicClient } from "wagmi";
+import { ethers } from "ethers";
 import { formatEther } from "viem";
 import { sdk } from '@farcaster/frame-sdk';
 import { Randomness } from "randomness-js";
@@ -46,7 +47,8 @@ const TokenTiles: React.FC = () => {
   const navigate = useNavigate();
   const { address, connector } = useAccount();
   const { data: walletClient } = useWalletClient();
-  const { data: blockNumber } = useBlockNumber({ watch: true })
+  const { data: blockNumber } = useBlockNumber({ watch: true });
+  const publicClient = usePublicClient();
 
   const [userInput, setUserInput] = useState('');
 
@@ -120,10 +122,14 @@ const TokenTiles: React.FC = () => {
   }, [blockNumber])
 
   const requestRandomness = async () => {
-    const randomness = Randomness.createBaseSepolia(walletClient);
+    const callbackGasLimit = 700_000;
+    const jsonProvider = new ethers.JsonRpcProvider(publicClient?.transport?.url);
+    const randomness = Randomness.createBaseSepolia(jsonProvider);
     console.log(randomness);
-    const response = await randomness.requestRandomness();
-    console.log(response);
+    // const response = await randomness.requestRandomness();
+    // console.log(response);
+    const [requestCallBackPrice] = await randomness.calculateRequestPriceNative(BigInt(callbackGasLimit));
+    console.log(requestCallBackPrice);
   }
 
   const joinGame = () => {
@@ -181,8 +187,6 @@ const TokenTiles: React.FC = () => {
   //   const secs = seconds % 60;
   //   return `${mins}:${secs.toString().padStart(2, '0')}`;
   // };
-
-  console.log(submittedWords);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
