@@ -1,14 +1,16 @@
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
 module.exports = buildModule("TokenTilesModule", (m) => {
+  const BaseSepolia	= "0xf4e080Db4765C856c0af43e4A8C4e31aA3b48779";
+
   const token20 = m.contract("TileTokenERC20", []);
   const token1155 = m.contract("TokenTilesERC1155", []);
-  const BaseSepolia	= "0xf4e080Db4765C856c0af43e4A8C4e31aA3b48779";
+  const randomNumber = m.contract("RandomNumber", [BaseSepolia]);
 
   const tokenTiles = m.contract("TokenTilesGame", [
     token1155,
     token20,
-    BaseSepolia
+    randomNumber
   ]);
 
   const setGameContract = m.call(
