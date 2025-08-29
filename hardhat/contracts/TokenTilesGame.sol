@@ -483,8 +483,8 @@ contract TokenTilesGame is ReentrancyGuard {
         return randomValue % 26; // 0-25 for A-Z
     }
 
-    function generateWithDirectFunding(uint32 callbackGasLimit) external payable {
-      randomNumber.generateWithDirectFunding(callbackGasLimit);
+    function generateWithDirectFunding(uint32 callbackGasLimit) external payable returns (uint256, uint256) {
+      return randomNumber.generateWithDirectFunding{value: msg.value}(callbackGasLimit);
     }
 
     // Helper function to get who claimed a specific word
