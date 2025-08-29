@@ -130,6 +130,14 @@ const TokenTiles: React.FC = () => {
     // console.log(response);
     const [requestCallBackPrice] = await randomness.calculateRequestPriceNative(BigInt(callbackGasLimit));
     console.log(requestCallBackPrice);
+
+    writeContract({
+      address: import.meta.env.VITE_TOKENTILESGAME,
+      abi: TokenTilesGame.abi,
+      functionName: 'generateWithDirectFunding',
+      args: [callbackGasLimit],
+      value: requestCallBackPrice,
+    })
   }
 
   const joinGame = () => {
