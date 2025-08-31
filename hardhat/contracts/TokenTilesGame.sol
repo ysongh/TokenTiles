@@ -25,7 +25,6 @@ contract TokenTilesGame is ReentrancyGuard {
     uint256 public constant BASE_REWARD = 10 * 10**18; // 10 TILE tokens
     uint256 public constant WORD_LENGTH_MULTIPLIER = 2 * 10**18; // 2 TILE per letter
     uint256 public constant MAX_SWAPS_PER_SESSION = 100;
-    uint256 public constant GAME_CREATION_FEE = 0 * 10**18; // 0 TILE token to create a game
 
     // Target word list structure for each game
     struct TargetWordList {
@@ -139,12 +138,6 @@ contract TokenTilesGame is ReentrancyGuard {
         require(bytes(word4Letter).length == 4, "4-letter word must be exactly 4 characters");
         require(bytes(word5Letter).length == 5, "5-letter word must be exactly 5 characters");
         require(bytes(word6Letter).length == 6, "6-letter word must be exactly 6 characters");
-        
-        // Charge creation fee if applicable
-        if (GAME_CREATION_FEE > 0) {
-            require(rewardToken.balanceOf(msg.sender) >= GAME_CREATION_FEE, "Insufficient tokens for creation fee");
-            rewardToken.transferFrom(msg.sender, address(this), GAME_CREATION_FEE);
-        }
         
         // Create word list
         _wordListIds++;
